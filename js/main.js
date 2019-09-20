@@ -81,6 +81,7 @@ var getPhotoElement = function (photos) {
   photoElement.querySelector('.picture__img').src = photos.url;
   photoElement.querySelector('.picture__likes').textContent = photos.likes;
   photoElement.querySelector('.picture__comments').textContent = photos.comments[getRendomNumber(commentsQuantity.MIN_NUMBER, commentsQuantity.MAX_NUMBER)];
+  return photoElement;
 };
 
 // Отрисовка DOM-элементов DocumentFragment
