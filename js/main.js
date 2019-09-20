@@ -2,11 +2,16 @@
 var similarListElement = document.querySelector('.pictures');
 var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
-var PHOTO_QUANTITY = 25;
+var QUANTITY = 25;
 
 var commentsQuantity = {
   MAX_NUMBER: 1,
   MIN_NUMBER: 4
+};
+
+var avatarQuantity = {
+  MAX_NUMBER: 1,
+  MIN_NUMBER: 6
 };
 
 var urlParams = {
@@ -15,7 +20,7 @@ var urlParams = {
   DESCRIPTION: ''
 };
 
-var commentsParam = {
+var commentsParams = {
   COMMENTS: ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'],
   NAMES: ['Артем', 'Иван', 'Лариса', 'Виктор', 'Илья', 'Мария']
 };
@@ -29,7 +34,7 @@ var getRandomArrElement = function (arr) {
 
 // Случайное число от max до min
 
-var getRendomNumber = function (min, max) {
+var getRandomNumber = function (min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   var renderNumber = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -40,9 +45,9 @@ var getRendomNumber = function (min, max) {
 
 var getCommentsItem = function () {
   return {
-    avatar: 'img/avatar-' + getRendomNumber(1, 6) + '.svg',
-    message: getRandomArrElement(commentsParam.COMMENTS),
-    name: getRandomArrElement(commentsParam.NAMES)
+    avatar: 'img/avatar-' + getRandomNumber(avatarQuantity.MIN_NUMBER, avatarQuantity.MAX_NUMBER) + '.svg',
+    message: getRandomArrElement(commentsParams.COMMENTS),
+    name: getRandomArrElement(commentsParams.NAMES)
   };
 };
 
@@ -57,12 +62,12 @@ var getCommentsArr = function (arrLength) {
 };
 
 
-var getPhotoItem = function (x) {
+var getPhotoItem = function (photoNumber) {
   return {
-    url: 'photos/' + x + '.' + 'jpg',
+    url: 'photos/' + photoNumber + '.jpg',
     description: '',
-    likes: getRendomNumber(urlParams.MIN_LIKE_NUMBER, urlParams.MAX_LIKE_NUMBER),
-    comments: getCommentsArr(getRendomNumber(commentsQuantity.MIN_NUMBER, commentsQuantity.MAX_NUMBER))
+    likes: getRandomNumber(urlParams.MIN_LIKE_NUMBER, urlParams.MAX_LIKE_NUMBER),
+    comments: getCommentsArr(getRandomNumber(commentsQuantity.MIN_NUMBER, commentsQuantity.MAX_NUMBER))
   };
 };
 
@@ -76,11 +81,11 @@ var getPhotosArr = function (arrLength) {
 
 // Создание DOM-элемента
 
-var getPhotoElement = function (photos) {
+var getPhotoElement = function (photo) {
   var photoElement = similarPhotoTemplate.cloneNode(true);
-  photoElement.querySelector('.picture__img').src = photos.url;
-  photoElement.querySelector('.picture__likes').textContent = photos.likes;
-  photoElement.querySelector('.picture__comments').textContent = photos.comments[getRendomNumber(commentsQuantity.MIN_NUMBER, commentsQuantity.MAX_NUMBER)];
+  photoElement.querySelector('.picture__img').src = photo.url;
+  photoElement.querySelector('.picture__likes').textContent = photo.likes;
+  photoElement.querySelector('.picture__comments').textContent = photo.comments[getRandomNumber(commentsQuantity.MIN_NUMBER, commentsQuantity.MAX_NUMBER)];
   return photoElement;
 };
 
@@ -97,7 +102,7 @@ var createPhotoElements = function (photos) {
 // Инициализация
 
 var innitApp = function () {
-  similarListElement.appendChild(createPhotoElements(getPhotosArr(PHOTO_QUANTITY)));
+  similarListElement.appendChild(createPhotoElements(getPhotosArr(QUANTITY)));
 };
 
 innitApp();
