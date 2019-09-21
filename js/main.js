@@ -93,9 +93,9 @@ var getPhotoElement = function (photo) {
 
 var createPhotoElements = function (photos) {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < photos.length; i++) {
-    fragment.appendChild(getPhotoElement(photos[i]));
-  }
+  photos.forEach(function (item) {
+    fragment.appendChild(getPhotoElement(item));
+  });
   return fragment;
 };
 
