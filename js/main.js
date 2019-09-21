@@ -23,6 +23,9 @@ var commentsParams = {
   NAMES: ['Артем', 'Иван', 'Лариса', 'Виктор', 'Илья', 'Мария']
 };
 
+var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
+var similarListElement = document.querySelector('.pictures');
+
 // Случайный элемент массива
 
 var getRandomArrElement = function (arr) {
@@ -79,7 +82,6 @@ var getPhotosArr = function (arrLength) {
 // Создание DOM-элемента
 
 var getPhotoElement = function (photo) {
-  var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
   var photoElement = similarPhotoTemplate.cloneNode(true);
   photoElement.querySelector('.picture__img').src = photo.url;
   photoElement.querySelector('.picture__likes').textContent = photo.likes;
@@ -99,10 +101,9 @@ var createPhotoElements = function (photos) {
 
 // Инициализация
 
-var innitApp = function () {
-  var similarListElement = document.querySelector('.pictures');
+var initApp = function () {
   similarListElement.appendChild(createPhotoElements(getPhotosArr(QUANTITY)));
 };
 
-innitApp();
+initApp();
 
