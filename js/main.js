@@ -1,6 +1,4 @@
 'use strict';
-var similarListElement = document.querySelector('.pictures');
-var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
 var QUANTITY = 25;
 
@@ -61,7 +59,6 @@ var getCommentsArr = function (arrLength) {
   return commentsArr;
 };
 
-
 var getPhotoItem = function (photoNumber) {
   return {
     url: 'photos/' + photoNumber + '.jpg',
@@ -82,6 +79,7 @@ var getPhotosArr = function (arrLength) {
 // Создание DOM-элемента
 
 var getPhotoElement = function (photo) {
+  var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
   var photoElement = similarPhotoTemplate.cloneNode(true);
   photoElement.querySelector('.picture__img').src = photo.url;
   photoElement.querySelector('.picture__likes').textContent = photo.likes;
@@ -102,6 +100,7 @@ var createPhotoElements = function (photos) {
 // Инициализация
 
 var innitApp = function () {
+  var similarListElement = document.querySelector('.pictures');
   similarListElement.appendChild(createPhotoElements(getPhotosArr(QUANTITY)));
 };
 
