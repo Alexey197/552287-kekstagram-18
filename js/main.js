@@ -19,7 +19,7 @@ var urlParams = {
 };
 
 var commentsParams = {
-  COMMENTS: ['Всё отлично!',
+  SENTENCES: ['Всё отлично!',
     'В целом всё неплохо. Но не всё.',
     'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
     'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
@@ -54,7 +54,7 @@ var getRandomNumber = function (min, max) {
 var getCommentsItem = function () {
   return {
     avatar: 'img/avatar-' + getRandomNumber(avatarQuantity.MIN_NUMBER, avatarQuantity.MAX_NUMBER) + '.svg',
-    message: getRandomArrElement(commentsParams.COMMENTS),
+    message: getRandomArrElement(commentsParams.SENTENCES),
     name: getRandomArrElement(commentsParams.NAMES)
   };
 };
@@ -129,12 +129,9 @@ var getRemoveChildren = function (element) {
 
 var getBigPhotoElement = function (photo) {
   var fragment = document.createDocumentFragment();
-  bigPicture.classList.remove('hidden');
-  bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
-  bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
   bigPicture.querySelector('.big-picture__img img').src = photo.url;
   bigPicture.querySelector('.likes-count').textContent = photo.likes;
-  bigPicture.querySelector('.comments-count').textContent = 'photo.comments.length';
+  bigPicture.querySelector('.comments-count').textContent = photo.comments.length;
   bigPicture.querySelector('.social__caption').textContent = photo.description;
   getRemoveChildren(bigPictureComments);
   photo.comments.forEach(function (item) {
@@ -142,13 +139,17 @@ var getBigPhotoElement = function (photo) {
   });
 
   bigPictureComments.appendChild(fragment);
+  bigPicture.classList.remove('hidden');
+  bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
+  bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
 };
 
 // Инициализация
 
 var initApp = function () {
-  similarListElement.appendChild(createPhotoElements(getPhotosArr(QUANTITY)));
+  var photoArr = getPhotosArr(QUANTITY);
+  similarListElement.appendChild(createPhotoElements(photoArr));
+  getBigPhotoElement(photoArr[0]);
 };
 
-getBigPhotoElement(getPhotosArr(QUANTITY)[0]);
 initApp();
