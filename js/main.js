@@ -37,8 +37,8 @@ var imageUploadForm = document.querySelector('.img-upload__form');
 // var imageUploadTitle = imageUploadForm.querySelector('.img-upload__title');
 var imageUpLoadInput = imageUploadForm.querySelector('.img-upload__input');
 var imageUploadOverlay = imageUploadForm.querySelector('.img-upload__overlay');
+var effectLevelPin = imageUploadForm.querySelector('.effect-level__line');
 var pinHandle = imageUploadForm.querySelector('.effect-level__pin');
-var pinlevelLine = imageUploadForm.querySelector('.effect-level__pin');
 
 // Случайный элемент массива
 
@@ -145,7 +145,6 @@ var getBigPhotoElement = function (photo) {
   });
 
   bigPictureComments.appendChild(fragment);
-  // bigPicture.classList.remove('hidden');
   bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
   bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
 };
@@ -171,31 +170,33 @@ imageUpLoadInput.addEventListener('change', function () {
 // захват элемента, перемещение и отпускание
 
 pinHandle.addEventListener('mousedown', function (evt) {
-  evt.preventDefault();
-
-  var startCoord = evt.clientX;
-  var dragged = false;
-
+  var effectLevelLineCoords = effectLevelPin.getBoundingClientRect();
+  var barWidth = effectLevelPin.offsetWidth;
+  var startCoords = evt.clientX;
   var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
-    var shift = startCoord - moveEvt.clientX;
-    startCoord = moveEvt.clientX;
-    pinlevelLine.style.left = ((pinlevelLine.offsetLeft - shift) / 495) * 100 + '%';
+    var shift = startCoords - moveEvt.clientX;
+    startCoords = moveEvt.clientX;
+    if (moveEvt.clientX > effectLevelLineCoords.right) {
+      pinHandle.style.left = barWidth;
+      startCoords = effectLevelLineCoords.right;
+    } else if (moveEvt.clientX < effectLevelLineCoords.left) {
+      pinHandle.style.left = 0;
+      startCoords = effectLevelLineCoords.left;
+    } else {
+      pinHandle.style.left = ((pinHandle.offsetLeft - shift) * 100 / barWidth) + '%';
+    }
+    pinHandle.style.left = ((pinHandle.offsetLeft - shift) * 100 / barWidth) + '%';
   };
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
-    if (dragged) {
-      var onClickPreventDefault = function () {
-        evt.preventDefault();
-        pinHandle.removeEventListener('click', onClickPreventDefault);
-      };
-      pinHandle.addEventListener('click', onClickPreventDefault);
-    }
   };
 
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
 });
+
+
