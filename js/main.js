@@ -187,7 +187,7 @@ var formOpen = function () {
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
-  closeForm()
+  closeForm();
   for (var i = 0; i < effectsItems.length; i++) {
     effectsItems[i].addEventListener('change', effectsItemsSwitch);
   }
