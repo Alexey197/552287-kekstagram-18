@@ -18,6 +18,12 @@ var urlParams = {
   DESCRIPTION: ''
 };
 
+var pinHandleParams = {
+  MIN_VALUE: 0,
+  MAX_VALUE: 100,
+  RELATIVE_VALUE: '%'
+};
+
 var commentsParams = {
   SENTENCES: ['Всё отлично!',
     'В целом всё неплохо. Но не всё.',
@@ -34,12 +40,12 @@ var bigPicture = document.querySelector('.big-picture');
 var bigPictureComments = document.querySelector('.social__comments');
 var bigPictureComment = document.querySelector('.social__comment');
 var imageUploadForm = document.querySelector('.img-upload__form');
-// var imageUploadTitle = imageUploadForm.querySelector('.img-upload__title');
 var imageUpLoadInput = imageUploadForm.querySelector('.img-upload__input');
 var imageUploadOverlay = imageUploadForm.querySelector('.img-upload__overlay');
 var effectLevelPin = imageUploadForm.querySelector('.effect-level__line');
 var pinHandle = imageUploadForm.querySelector('.effect-level__pin');
-
+var effectsItems = imageUploadForm.querySelectorAll('.effects__radio');
+var closeFormButton = imageUploadForm.querySelector('.img-upload__cancel');
 // Случайный элемент массива
 
 var getRandomArrElement = function (arr) {
@@ -151,52 +157,61 @@ var getBigPhotoElement = function (photo) {
 
 // Инициализация
 
+var formOpen = function () {
+  imageUploadOverlay.classList.remove('visually-hidden');
+  pinHandle.addEventListener('mousedown', function (evt) {
+    var effectLevelLineCoords = effectLevelPin.getBoundingClientRect();
+    var barWidth = effectLevelPin.offsetWidth;
+    var startCoords = evt.clientX;
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+      var shift = startCoords - moveEvt.clientX;
+      startCoords = moveEvt.clientX;
+      if (moveEvt.clientX > effectLevelLineCoords.right) {
+        pinHandle.style.left = barWidth;
+        startCoords = effectLevelLineCoords.right;
+      } else if (moveEvt.clientX < effectLevelLineCoords.left) {
+        pinHandle.style.left = pinHandleParams.MIN_VALUE;
+        startCoords = effectLevelLineCoords.left;
+      } else {
+        pinHandle.style.left = ((pinHandle.offsetLeft - shift) * pinHandleParams.MAX_VALUE / barWidth) + pinHandleParams.RELATIVE_VALUE;
+      }
+    };
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+  closeForm()
+  for (var i = 0; i < effectsItems.length; i++) {
+    effectsItems[i].addEventListener('change', effectsItemsSwitch);
+  }
+};
+
+var effectsItemsSwitch = function () {
+  pinHandle.style.left = pinHandleParams.MIN_VALUE + pinHandleParams.RELATIVE_VALUE;
+};
+
+var closeForm = function () {
+  closeFormButton.addEventListener('click', function () {
+    imageUploadOverlay.classList.add('visually-hidden');
+  });
+};
+
 var initApp = function () {
   var photoArr = getPhotosArr(QUANTITY);
   similarListElement.appendChild(createPhotoElements(photoArr));
   getBigPhotoElement(photoArr[0]);
+  imageUpLoadInput.addEventListener('change', function () {
+    imageUploadOverlay.classList.remove('hidden');
+    formOpen();
+  });
 };
 
 initApp();
-
-// Загрузка изображения и показ формы редактирования
-
-imageUpLoadInput.classList.remove('visually-hidden');
-
-imageUpLoadInput.addEventListener('change', function () {
-  imageUploadOverlay.classList.remove('hidden');
-});
-
-// захват элемента, перемещение и отпускание
-
-pinHandle.addEventListener('mousedown', function (evt) {
-  var effectLevelLineCoords = effectLevelPin.getBoundingClientRect();
-  var barWidth = effectLevelPin.offsetWidth;
-  var startCoords = evt.clientX;
-  var onMouseMove = function (moveEvt) {
-    moveEvt.preventDefault();
-    var shift = startCoords - moveEvt.clientX;
-    startCoords = moveEvt.clientX;
-    if (moveEvt.clientX > effectLevelLineCoords.right) {
-      pinHandle.style.left = barWidth;
-      startCoords = effectLevelLineCoords.right;
-    } else if (moveEvt.clientX < effectLevelLineCoords.left) {
-      pinHandle.style.left = 0;
-      startCoords = effectLevelLineCoords.left;
-    } else {
-      pinHandle.style.left = ((pinHandle.offsetLeft - shift) * 100 / barWidth) + '%';
-    }
-    pinHandle.style.left = ((pinHandle.offsetLeft - shift) * 100 / barWidth) + '%';
-  };
-  var onMouseUp = function (upEvt) {
-    upEvt.preventDefault();
-
-    document.removeEventListener('mousemove', onMouseMove);
-    document.removeEventListener('mouseup', onMouseUp);
-  };
-
-  document.addEventListener('mousemove', onMouseMove);
-  document.addEventListener('mouseup', onMouseUp);
-});
-
 
