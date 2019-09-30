@@ -46,6 +46,8 @@ var imageUploadOverlay = imageUploadForm.querySelector('.img-upload__overlay');
 var pinHandle = imageUploadForm.querySelector('.effect-level__pin');
 var effectsItems = imageUploadForm.querySelectorAll('.effects__radio');
 var closeFormButton = imageUploadForm.querySelector('.img-upload__cancel');
+var textHashtags = imageUploadForm.querySelector('.text__hashtags');
+var textDescription = imageUploadForm.querySelector('.text__description');
 // Случайный элемент массива
 
 var getRandomArrElement = function (arr) {
@@ -208,7 +210,30 @@ var initApp = function () {
     imageUploadOverlay.classList.remove('hidden');
     formOpen();
   });
+  imageUploadForm.setAttribute('action', 'https://js.dump.academy/kekstagram');
+  textDescription.setAttribute('maxlength', '140');
 };
 
 initApp();
 
+var hashtagsValidation = function () {
+  var hashtagArr = textHashtags.value.split(' ');
+  var message = '';
+  for (var i = 0; i < hashtagArr.length; i++) {
+    var firstCharacter = hashtagArr[i][0];
+    if (hashtagArr[i].length > 20) {
+      message += ' Максимальная длина одного хэш-тега 20 символов, включая решётку ';
+      textHashtags.classList.add('red');
+    } else if (firstCharacter === '#' && hashtagArr[i] === 1) {
+      message += ' Хеш-тег не может состоять только из одной решётки ';
+      textHashtags.classList.add('red');
+    } else if (hashtagArr > 5) {
+      message += 'Нельзя указать больше пяти хэш-тегов';
+      textHashtags.classList.add('red');
+    } else {
+      textHashtags.setCustomValidity('');
+    }
+  } textHashtags.setCustomValidity(message);
+};
+
+textHashtags.addEventListener('change', hashtagsValidation);
