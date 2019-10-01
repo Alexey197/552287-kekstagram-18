@@ -185,10 +185,18 @@ var onPinMove = function (evt) {
 var formOpen = function () {
   imageUploadOverlay.classList.remove('visually-hidden');
   pinHandle.addEventListener('mousedown', onPinMove);
+  imageUploadForm.addEventListener('invalid', getRedColorError, true);
+  textHashtags.addEventListener('change', hashtagsValidation);
   closeForm();
   for (var i = 0; i < effectsItems.length; i++) {
     effectsItems[i].addEventListener('change', effectsItemsSwitch);
   }
+};
+
+var getRedColorError = function (e) {
+  e.preventDefault();
+  var target = e.target;
+  target.classList.add('red');
 };
 
 var effectsItemsSwitch = function () {
@@ -199,7 +207,30 @@ var closeForm = function () {
   closeFormButton.addEventListener('click', function () {
     imageUploadOverlay.classList.add('visually-hidden');
     pinHandle.removeEventListener('mousedown', onPinMove);
+    textHashtags.removeEventListener('change', hashtagsValidation);
+    imageUploadForm.removeEventListener('invalid', getRedColorError, true);
   });
+};
+
+var hashtagsValidation = function () {
+  var hashtagArr = textHashtags.value.split(' ');
+  var message = '';
+  for (var i = 0; i < hashtagArr.length; i++) {
+    var firstCharacter = hashtagArr[i][0];
+    if (hashtagArr[i].length > 20) {
+      message += ' Максимальная длина одного хэш-тега 20 символов, включая решётку ';
+    } else if (firstCharacter === '#' && hashtagArr[i] === 1) {
+      message += ' Хеш-тег не может состоять только из одной решётки ';
+    } else if (hashtagArr > 5) {
+      message += 'Нельзя указать больше пяти хэш-тегов';
+    } else if (hashtagArr[0] !== '#') {
+      message += 'Хэш-тег начинается с символа # (решётка)';
+    } else if (hashtagArr === '#') {
+      message += 'Хеш-тег не может состоять только из одной решётки';
+    } else {
+      textHashtags.setCustomValidity('');
+    }
+  } textHashtags.setCustomValidity(message);
 };
 
 var initApp = function () {
@@ -216,24 +247,4 @@ var initApp = function () {
 
 initApp();
 
-var hashtagsValidation = function () {
-  var hashtagArr = textHashtags.value.split(' ');
-  var message = '';
-  for (var i = 0; i < hashtagArr.length; i++) {
-    var firstCharacter = hashtagArr[i][0];
-    if (hashtagArr[i].length > 20) {
-      message += ' Максимальная длина одного хэш-тега 20 символов, включая решётку ';
-      textHashtags.classList.add('red');
-    } else if (firstCharacter === '#' && hashtagArr[i] === 1) {
-      message += ' Хеш-тег не может состоять только из одной решётки ';
-      textHashtags.classList.add('red');
-    } else if (hashtagArr > 5) {
-      message += 'Нельзя указать больше пяти хэш-тегов';
-      textHashtags.classList.add('red');
-    } else {
-      textHashtags.setCustomValidity('');
-    }
-  } textHashtags.setCustomValidity(message);
-};
 
-textHashtags.addEventListener('change', hashtagsValidation);
