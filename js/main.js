@@ -35,6 +35,14 @@ var commentsParams = {
   NAMES: ['Артем', 'Иван', 'Лариса', 'Виктор', 'Илья', 'Мария']
 };
 
+var errorCodesText = {
+  'not_unique': 'Один и тот же хэш-тег не может быть использован дважды.',
+  'amount_hashtags': 'Нельзя указать больше пяти хэш-тегов.',
+  'hashtag_length': 'Максимальная длина одного хэш-тега 20 символов, включая решётку.',
+  'only_dies': 'Хеш-тег не может состоять только из одной решётки.',
+  'start_with_dies': 'Хэш-тег начинается с символа # (решётка).'
+};
+
 var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
 var similarListElement = document.querySelector('.pictures');
 var bigPicture = document.querySelector('.big-picture');
@@ -48,7 +56,7 @@ var effectsItems = imageUploadForm.querySelectorAll('.effects__radio');
 var closeFormButton = imageUploadForm.querySelector('.img-upload__cancel');
 var textHashtags = imageUploadForm.querySelector('.text__hashtags');
 var textDescription = imageUploadForm.querySelector('.text__description');
-// Случайный элемент массива
+
 
 var getRandomArrElement = function (arr) {
   var arrElement = Math.floor(Math.random() * arr.length);
@@ -188,7 +196,6 @@ var formOpen = function () {
   textHashtags.addEventListener('blur', hashtagsValidation);
   textDescription.addEventListener('blur', descriptionValidation);
   imageUploadForm.addEventListener('invalid', function (e) {
-    e.preventDefault();
     e.target.classList.add('red');
   }, true);
   closeForm();
@@ -216,31 +223,47 @@ var isUniqueElem = function (item, index, curArr) {
 };
 
 var hashtagsValidation = function () {
-  var hashtagArr = textHashtags.value.split(' ');
-  var message = '';
+  var hashtagArr = textHashtags.value.toLowerCase().split(' ');
+  var message = [];
+
+  var errorCodes = {
+    'not_unique': false,
+    'amount_hashtags': false,
+    'hashtag_length': false,
+    'only_dies': false,
+    'start_with_dies': false
+  };
+
+  if (!hashtagArr.every(isUniqueElem)) {
+    errorCodes['not_unique'] = true;
+  }
+
+  if (hashtagArr.length > 5) {
+    errorCodes['amount_hashtags'] = true;
+  }
+
   for (var i = 0; i < hashtagArr.length; i++) {
     var firstCharacter = hashtagArr[i][0];
     if (hashtagArr[i].length > 20) {
-      message += ' Максимальная длина одного хэш-тега 20 символов, включая решётку ';
+      errorCodes['hashtag_length'] = true;
     } else if (firstCharacter === '#' && hashtagArr[i].length === 1) {
-      message += ' Хеш-тег не может состоять только из одной решётки ';
-    } else if (hashtagArr.length > 5) {
-      message += ' Нельзя указать больше пяти хэш-тегов ';
+      errorCodes['only_dies'] = true;
     } else if (hashtagArr[i][0] !== '#') {
-      message += ' Хэш-тег начинается с символа # (решётка) ';
-    } else if (hashtagArr[i] === '#') {
-      message += ' Хеш-тег не может состоять только из одной решётки ';
-    } else if (hashtagArr.every(isUniqueElem)) {
-      message += 'Один и тот же хэш-тег не может быть использован дважды';
-    } else {
-      textHashtags.setCustomValidity('');
+      errorCodes['start_with_dies'] = true;
     }
-  }textHashtags.setCustomValidity(message);
-};
+  }
 
+  Object.keys(errorCodes).forEach(function (it) {
+    if (errorCodes[it]) {
+      message.push(errorCodesText[it]);
+    }
+  });
+
+  textHashtags.setCustomValidity(message.join(' '));
+};
 var descriptionValidation = function () {
   if (textDescription.value.length > 140) {
-    textDescription.setCustomValidity('Длина комментария не может составлять больше 140 символов');
+    textDescription.setCustomValidity('Длина комментария не может составлять больше 140 символов.');
   } else {
     textDescription.setCustomValidity('');
   }
