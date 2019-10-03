@@ -43,6 +43,56 @@ var errorCodesText = {
   'HASHTAGS_START_DIEZ': 'Хэш-тег начинается с символа # (решётка).'
 };
 
+var filters = [
+  {
+    NAME: 'NONE',
+    CLASS_NAME: 'effects__preview--none',
+    FILTER: '',
+    MAX_VALUE: '0',
+    HIDDEN_SLIDER: true
+  },
+  {
+    NAME: 'CHROME',
+    CLASS_NAME: 'effects__preview--chrome',
+    FILTER: 'grayscale',
+    MIN_VALUE: '0',
+    MAX_VALUE: '1',
+    FILTER_UNIT: ''
+  },
+  {
+    NAME: 'SEPIA',
+    CLASS_NAME: 'effects__preview--sepia',
+    FILTER: 'sepia',
+    MIN_VALUE: '0',
+    MAX_VALUE: '1',
+    FILTER_UNIT: ''
+  },
+  {
+    NAME: 'MARVIN',
+    CLASS_NAME: 'effects__preview--marvin',
+    FILTER: 'invert',
+    MIN_VALUE: '0',
+    MAX_VALUE: '100',
+    FILTER_UNIT: '%'
+  },
+  {
+    NAME: 'PHOBOS',
+    CLASS_NAME: 'effects__preview--phobos',
+    FILTER: 'blur',
+    MIN_VALUE: '0',
+    MAX_VALUE: '3',
+    FILTER_UNIT: 'px'
+  },
+  {
+    NAME: 'HEAT',
+    CLASS_NAME: 'effects__preview--heat',
+    FILTER: 'brightness',
+    MIN_VALUE: '1',
+    MAX_VALUE: '3',
+    FILTER_UNIT: ''
+  }
+];
+
 var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
 var similarListElement = document.querySelector('.pictures');
 var bigPicture = document.querySelector('.big-picture');
@@ -56,12 +106,13 @@ var effectsItems = imageUploadForm.querySelectorAll('.effects__radio');
 var closeFormButton = imageUploadForm.querySelector('.img-upload__cancel');
 var textHashtags = imageUploadForm.querySelector('.text__hashtags');
 var textDescription = imageUploadForm.querySelector('.text__description');
-
+var uploadPhoto = imageUploadForm.querySelector('.img-upload__preview img');
 
 var getRandomArrElement = function (arr) {
   var arrElement = Math.floor(Math.random() * arr.length);
   return arr[arrElement];
 };
+
 
 // Случайное число от max до min
 
@@ -178,8 +229,11 @@ var onPinMove = function (evt) {
     } else if (currentPinPosition > pinHandleParams.MAX_VALUE) {
       currentPinPosition = pinHandleParams.MAX_VALUE;
     }
-
     pinHandle.style.left = currentPinPosition + '%';
+    for (var i = 0; i < filters.length; i++) {
+      var filtersValue = currentPinPosition * filters[i].MAX_VALUE / 100;
+      uploadPhoto.style.filter = filters[i].FILTER + '(' + filtersValue + filters[i].FILTER_UNIT + ')';
+    }
   };
 
   var onMouseUp = function () {
@@ -199,7 +253,8 @@ var formOpen = function () {
     e.target.classList.add('red');
   }, true);
   closeForm();
-  for (var i = 0; i < effectsItems.length; i++) {
+  for (var i = 0; i < filters.length; i++) {
+    uploadPhoto.classList.add(filters[i].CLASS_NAME);
     effectsItems[i].addEventListener('change', effectsItemsSwitch);
   }
 };
