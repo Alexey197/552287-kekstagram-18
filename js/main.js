@@ -36,11 +36,11 @@ var commentsParams = {
 };
 
 var errorCodesText = {
-  'not_unique': 'Один и тот же хэш-тег не может быть использован дважды.',
-  'amount_hashtags': 'Нельзя указать больше пяти хэш-тегов.',
-  'hashtag_length': 'Максимальная длина одного хэш-тега 20 символов, включая решётку.',
-  'only_dies': 'Хеш-тег не может состоять только из одной решётки.',
-  'start_with_dies': 'Хэш-тег начинается с символа # (решётка).'
+  'HASHTAGS_UNIQUE': 'Один и тот же хэш-тег не может быть использован дважды.',
+  'HASHTAGS_AMOUNT': 'Нельзя указать больше пяти хэш-тегов.',
+  'HASHTAGS_LENGTH': 'Максимальная длина одного хэш-тега 20 символов, включая решётку.',
+  'HASHTAGS_DIEZ': 'Хеш-тег не может состоять только из одной решётки.',
+  'HASHTAGS_START_DIEZ': 'Хэш-тег начинается с символа # (решётка).'
 };
 
 var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
@@ -227,19 +227,19 @@ var hashtagsValidation = function () {
   var message = [];
 
   var errorCodes = {
-    'not_unique': false,
-    'amount_hashtags': false,
+    'hashtags_unique': false,
+    'hashtags_amount': false,
     'hashtag_length': false,
-    'only_dies': false,
-    'start_with_dies': false
+    'hashtag_diez': false,
+    'hashtag_start_dies': false
   };
 
   if (!hashtagArr.every(isUniqueElem)) {
-    errorCodes['not_unique'] = true;
+    errorCodes['hashtags_unique'] = true;
   }
 
   if (hashtagArr.length > 5) {
-    errorCodes['amount_hashtags'] = true;
+    errorCodes['hashtags_amount'] = true;
   }
 
   for (var i = 0; i < hashtagArr.length; i++) {
@@ -247,9 +247,9 @@ var hashtagsValidation = function () {
     if (hashtagArr[i].length > 20) {
       errorCodes['hashtag_length'] = true;
     } else if (firstCharacter === '#' && hashtagArr[i].length === 1) {
-      errorCodes['only_dies'] = true;
+      errorCodes['hashtag_diez'] = true;
     } else if (hashtagArr[i][0] !== '#') {
-      errorCodes['start_with_dies'] = true;
+      errorCodes['hashtag_start_dies'] = true;
     }
   }
 
