@@ -1447,3 +1447,7 @@ main {
     grid-row: 1 / span 3;
   }
 }
+
+.red {
+  border: 2px solid red;
+}
