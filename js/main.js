@@ -35,14 +35,6 @@ var commentsParams = {
   NAMES: ['Артем', 'Иван', 'Лариса', 'Виктор', 'Илья', 'Мария']
 };
 
-var errorCodesText = {
-  'HASHTAGS_UNIQUE': 'Один и тот же хэш-тег не может быть использован дважды.',
-  'HASHTAGS_AMOUNT': 'Нельзя указать больше пяти хэш-тегов.',
-  'HASHTAGS_LENGTH': 'Максимальная длина одного хэш-тега 20 символов, включая решётку.',
-  'HASHTAGS_DIEZ': 'Хеш-тег не может состоять только из одной решётки.',
-  'HASHTAGS_START_DIEZ': 'Хэш-тег начинается с символа # (решётка).'
-};
-
 var filters = [
   {
     NAME: 'NONE',
@@ -103,6 +95,10 @@ var imageUpLoadInput = imageUploadForm.querySelector('.img-upload__input');
 var imageUploadOverlay = imageUploadForm.querySelector('.img-upload__overlay');
 var pinHandle = imageUploadForm.querySelector('.effect-level__pin');
 var effectsItems = imageUploadForm.querySelectorAll('.effects__radio');
+var effects = imageUploadForm.querySelector('.effects');
+// var effectsLineLevel = imageUploadForm.querySelector('.effect-level__line');
+var effectSlider = imageUploadForm.querySelector('.effect-level');
+// var effectLevelValue = imageUploadForm.querySelector('.effect-level__value');
 var closeFormButton = imageUploadForm.querySelector('.img-upload__cancel');
 var textHashtags = imageUploadForm.querySelector('.text__hashtags');
 var textDescription = imageUploadForm.querySelector('.text__description');
@@ -230,10 +226,6 @@ var onPinMove = function (evt) {
       currentPinPosition = pinHandleParams.MAX_VALUE;
     }
     pinHandle.style.left = currentPinPosition + '%';
-    for (var i = 0; i < filters.length; i++) {
-      var filtersValue = currentPinPosition * filters[i].MAX_VALUE / 100;
-      uploadPhoto.style.filter = filters[i].FILTER + '(' + filtersValue + filters[i].FILTER_UNIT + ')';
-    }
   };
 
   var onMouseUp = function () {
@@ -242,6 +234,29 @@ var onPinMove = function (evt) {
   };
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
+};
+
+var changeEffects = function () {
+  if (effects.querySelector('input:checked').value !== 'none') {
+    effectSlider.classList.remove('hidden');
+  }
+  switch (effects.querySelector('input:checked').value) {
+    case 'chrome':
+      uploadPhoto.classList.add('effects__preview--chrome');
+      break;
+    case 'sepia':
+      uploadPhoto.classList.add('effects__preview--sepia');
+      break;
+    case 'marvin':
+      uploadPhoto.classList.add('effects__preview--marvin');
+      break;
+    case 'phobos':
+      uploadPhoto.classList.add('effects__preview--phobos');
+      break;
+    case 'heat':
+      uploadPhoto.classList.add('effects__preview--heat');
+      break;
+  }
 };
 
 var formOpen = function () {
@@ -254,9 +269,9 @@ var formOpen = function () {
   }, true);
   closeForm();
   for (var i = 0; i < filters.length; i++) {
-    uploadPhoto.classList.add(filters[i].CLASS_NAME);
     effectsItems[i].addEventListener('change', effectsItemsSwitch);
   }
+  effects.addEventListener('click', changeEffects);
 };
 
 var effectsItemsSwitch = function () {
@@ -308,6 +323,14 @@ var hashtagsValidation = function () {
     }
   }
 
+  var errorCodesText = {
+    'hashtags_unique': 'Один и тот же хэш-тег не может быть использован дважды.',
+    'hashtags_amount': 'Нельзя указать больше пяти хэш-тегов.',
+    'hashtag_length': 'Максимальная длина одного хэш-тега 20 символов, включая решётку.',
+    'hashtag_diez': 'Хеш-тег не может состоять только из одной решётки.',
+    'hashtag_start_dies': 'Хэш-тег начинается с символа # (решётка).'
+  };
+
   Object.keys(errorCodes).forEach(function (it) {
     if (errorCodes[it]) {
       message.push(errorCodesText[it]);
@@ -330,6 +353,7 @@ var initApp = function () {
   getBigPhotoElement(photoArr[0]);
   imageUpLoadInput.addEventListener('change', function () {
     imageUploadOverlay.classList.remove('hidden');
+    effectSlider.classList.add('hidden');
     formOpen();
   });
   imageUploadForm.setAttribute('action', 'https://js.dump.academy/kekstagram');
