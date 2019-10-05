@@ -39,42 +39,42 @@ var filters = {
   NONE: {
     CLASS_NAME: 'effects__preview--none',
     FILTER: '',
-    MAX_VALUE: '0',
+    MAX_VALUE: 0,
     HIDDEN_SLIDER: true
   },
   CHROME: {
     CLASS_NAME: 'effects__preview--chrome',
     FILTER: 'grayscale',
-    MIN_VALUE: '0',
-    MAX_VALUE: '1',
+    MIN_VALUE: 0,
+    MAX_VALUE: 1,
     FILTER_UNIT: ''
   },
   SEPIA: {
     CLASS_NAME: 'effects__preview--sepia',
     FILTER: 'sepia',
-    MIN_VALUE: '0',
-    MAX_VALUE: '1',
+    MIN_VALUE: 0,
+    MAX_VALUE: 1,
     FILTER_UNIT: ''
   },
   MARVIN: {
     CLASS_NAME: 'effects__preview--marvin',
     FILTER: 'invert',
-    MIN_VALUE: '0',
-    MAX_VALUE: '100',
+    MIN_VALUE: 0,
+    MAX_VALUE: 100,
     FILTER_UNIT: '%'
   },
   PHOBOS: {
     CLASS_NAME: 'effects__preview--phobos',
     FILTER: 'blur',
-    MIN_VALUE: '0',
-    MAX_VALUE: '3',
+    MIN_VALUE: 0,
+    MAX_VALUE: 3,
     FILTER_UNIT: 'px'
   },
   HEAT: {
     CLASS_NAME: 'effects__preview--heat',
     FILTER: 'brightness',
-    MIN_VALUE: '1',
-    MAX_VALUE: '3',
+    MIN_VALUE: 1,
+    MAX_VALUE: 3,
     FILTER_UNIT: ''
   }
 };
@@ -91,7 +91,6 @@ var pinHandle = imageUploadForm.querySelector('.effect-level__pin');
 var effectsItems = imageUploadForm.querySelectorAll('.effects__radio');
 var effects = imageUploadForm.querySelector('.effects');
 var effectSlider = imageUploadForm.querySelector('.effect-level');
-// var effectLevelValue = imageUploadForm.querySelector('.effect-level__value');
 var closeFormButton = imageUploadForm.querySelector('.img-upload__cancel');
 var textHashtags = imageUploadForm.querySelector('.text__hashtags');
 var textDescription = imageUploadForm.querySelector('.text__description');
@@ -219,6 +218,16 @@ var onPinMove = function (evt) {
       currentPinPosition = pinHandleParams.MAX_VALUE;
     }
     pinHandle.style.left = currentPinPosition + '%';
+    var effectPinValue = Math.round(currentPinPosition);
+    var changePinHandleObj = {
+      'chrome': 'grayscale(' + effectPinValue / pinHandleParams.MAX_VALUE + ')',
+      'sepia': 'sepia(' + effectPinValue / pinHandleParams.MAX_VALUE + ')',
+      'marvin': 'invert(' + effectPinValue + filters.MARVIN.FILTER_UNIT + ')',
+      'phobos': 'blur(' + effectPinValue / pinHandleParams.MAX_VALUE * (filters.PHOBOS.MAX_VALUE - filters.PHOBOS.MIN_VALUE) + filters.PHOBOS.FILTER_UNIT + ')',
+      'heat': 'brightness(' + (effectPinValue / pinHandleParams.MAX_VALUE * (filters.HEAT.MAX_VALUE - filters.HEAT.MIN_VALUE) + filters.HEAT.MIN_VALUE) + ')'
+    };
+    var inputValue = imageUploadForm.effect.value;
+    uploadPhoto.style.filter = changePinHandleObj[inputValue];
   };
 
   var onMouseUp = function () {
@@ -248,11 +257,16 @@ var changeEffects = function () {
 var removePictureSettings = function () {
   effectSlider.classList.add('hidden');
   uploadPhoto.removeAttribute('class');
+  uploadPhoto.removeAttribute('style');
 };
 
 var onPictureSettings = function () {
   removePictureSettings();
   changeEffects();
+};
+
+var effectsItemsSwitch = function () {
+  pinHandle.style.left = pinHandleParams.MIN_VALUE + pinHandleParams.RELATIVE_VALUE;
 };
 
 var formOpen = function () {
@@ -264,14 +278,11 @@ var formOpen = function () {
     e.target.classList.add('red');
   }, true);
   closeForm();
-  for (var i = 0; i < filters.length; i++) {
+  for (var i = 0; i < effectsItems.length; i++) {
     effectsItems[i].addEventListener('change', effectsItemsSwitch);
   }
   effects.addEventListener('change', onPictureSettings);
-};
-
-var effectsItemsSwitch = function () {
-  pinHandle.style.left = pinHandleParams.MIN_VALUE + pinHandleParams.RELATIVE_VALUE;
+  pinHandle.addEventListener('mouseup', onPinMove);
 };
 
 var closeForm = function () {
