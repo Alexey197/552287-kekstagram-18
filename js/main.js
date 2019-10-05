@@ -229,26 +229,19 @@ var onPinMove = function (evt) {
   document.addEventListener('mouseup', onMouseUp);
 };
 
+var changeEffectsObj = {
+  'chrome': filters.CHROME.CLASS_NAME,
+  'sepia': filters.SEPIA.CLASS_NAME,
+  'marvin': filters.MARVIN.CLASS_NAME,
+  'phobos': filters.PHOBOS.CLASS_NAME,
+  'heat': filters.HEAT.CLASS_NAME
+};
+
 var changeEffects = function () {
-  if (effects.querySelector('input:checked').value !== 'none') {
+  var inputValue = imageUploadForm.effect.value;
+  uploadPhoto.classList.add(changeEffectsObj[inputValue]);
+  if (inputValue !== 'none') {
     effectSlider.classList.remove('hidden');
-  }
-  switch (effects.querySelector('input:checked').value) {
-    case 'chrome':
-      uploadPhoto.classList.add('effects__preview--chrome');
-      break;
-    case 'sepia':
-      uploadPhoto.classList.add('effects__preview--sepia');
-      break;
-    case 'marvin':
-      uploadPhoto.classList.add('effects__preview--marvin');
-      break;
-    case 'phobos':
-      uploadPhoto.classList.add('effects__preview--phobos');
-      break;
-    case 'heat':
-      uploadPhoto.classList.add('effects__preview--heat');
-      break;
   }
 };
 
@@ -274,7 +267,7 @@ var formOpen = function () {
   for (var i = 0; i < filters.length; i++) {
     effectsItems[i].addEventListener('change', effectsItemsSwitch);
   }
-  effects.addEventListener('click', onPictureSettings);
+  effects.addEventListener('change', onPictureSettings);
 };
 
 var effectsItemsSwitch = function () {
