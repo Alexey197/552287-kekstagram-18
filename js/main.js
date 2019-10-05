@@ -35,55 +35,49 @@ var commentsParams = {
   NAMES: ['Артем', 'Иван', 'Лариса', 'Виктор', 'Илья', 'Мария']
 };
 
-var filters = [
-  {
-    NAME: 'NONE',
+var filters = {
+  NONE: {
     CLASS_NAME: 'effects__preview--none',
     FILTER: '',
     MAX_VALUE: '0',
     HIDDEN_SLIDER: true
   },
-  {
-    NAME: 'CHROME',
+  CHROME: {
     CLASS_NAME: 'effects__preview--chrome',
     FILTER: 'grayscale',
     MIN_VALUE: '0',
     MAX_VALUE: '1',
     FILTER_UNIT: ''
   },
-  {
-    NAME: 'SEPIA',
+  SEPIA: {
     CLASS_NAME: 'effects__preview--sepia',
     FILTER: 'sepia',
     MIN_VALUE: '0',
     MAX_VALUE: '1',
     FILTER_UNIT: ''
   },
-  {
-    NAME: 'MARVIN',
+  MARVIN: {
     CLASS_NAME: 'effects__preview--marvin',
     FILTER: 'invert',
     MIN_VALUE: '0',
     MAX_VALUE: '100',
     FILTER_UNIT: '%'
   },
-  {
-    NAME: 'PHOBOS',
+  PHOBOS: {
     CLASS_NAME: 'effects__preview--phobos',
     FILTER: 'blur',
     MIN_VALUE: '0',
     MAX_VALUE: '3',
     FILTER_UNIT: 'px'
   },
-  {
-    NAME: 'HEAT',
+  HEAT: {
     CLASS_NAME: 'effects__preview--heat',
     FILTER: 'brightness',
     MIN_VALUE: '1',
     MAX_VALUE: '3',
     FILTER_UNIT: ''
   }
-];
+};
 
 var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
 var similarListElement = document.querySelector('.pictures');
@@ -96,7 +90,6 @@ var imageUploadOverlay = imageUploadForm.querySelector('.img-upload__overlay');
 var pinHandle = imageUploadForm.querySelector('.effect-level__pin');
 var effectsItems = imageUploadForm.querySelectorAll('.effects__radio');
 var effects = imageUploadForm.querySelector('.effects');
-// var effectsLineLevel = imageUploadForm.querySelector('.effect-level__line');
 var effectSlider = imageUploadForm.querySelector('.effect-level');
 // var effectLevelValue = imageUploadForm.querySelector('.effect-level__value');
 var closeFormButton = imageUploadForm.querySelector('.img-upload__cancel');
@@ -236,28 +229,38 @@ var onPinMove = function (evt) {
   document.addEventListener('mouseup', onMouseUp);
 };
 
-// var changeEffects = function () {
-//   if (effects.querySelector('input:checked').value !== 'none') {
-//     effectSlider.classList.remove('hidden');
-//   }
-//   switch (effects.querySelector('input:checked').value) {
-//     case 'chrome':
-//       uploadPhoto.classList.add('effects__preview--chrome');
-//       break;
-//     case 'sepia':
-//       uploadPhoto.classList.add('effects__preview--sepia');
-//       break;
-//     case 'marvin':
-//       uploadPhoto.classList.add('effects__preview--marvin');
-//       break;
-//     case 'phobos':
-//       uploadPhoto.classList.add('effects__preview--phobos');
-//       break;
-//     case 'heat':
-//       uploadPhoto.classList.add('effects__preview--heat');
-//       break;
-//   }
-// };
+var changeEffects = function () {
+  if (effects.querySelector('input:checked').value !== 'none') {
+    effectSlider.classList.remove('hidden');
+  }
+  switch (effects.querySelector('input:checked').value) {
+    case 'chrome':
+      uploadPhoto.classList.add('effects__preview--chrome');
+      break;
+    case 'sepia':
+      uploadPhoto.classList.add('effects__preview--sepia');
+      break;
+    case 'marvin':
+      uploadPhoto.classList.add('effects__preview--marvin');
+      break;
+    case 'phobos':
+      uploadPhoto.classList.add('effects__preview--phobos');
+      break;
+    case 'heat':
+      uploadPhoto.classList.add('effects__preview--heat');
+      break;
+  }
+};
+
+var removePictureSettings = function () {
+  effectSlider.classList.add('hidden');
+  uploadPhoto.removeAttribute('class');
+};
+
+var onPictureSettings = function () {
+  removePictureSettings();
+  changeEffects();
+};
 
 var formOpen = function () {
   imageUploadOverlay.classList.remove('visually-hidden');
@@ -271,29 +274,7 @@ var formOpen = function () {
   for (var i = 0; i < filters.length; i++) {
     effectsItems[i].addEventListener('change', effectsItemsSwitch);
   }
-  effects.addEventListener('click', function (evt) {
-    var target = evt.target;
-    if (target.value !== 'none') {
-      effectSlider.classList.remove('hidden');
-    }
-    switch (target.value) {
-      case 'chrome':
-        uploadPhoto.classList.add('effects__preview--chrome');
-        break;
-      case 'sepia':
-        uploadPhoto.classList.add('effects__preview--sepia');
-        break;
-      case 'marvin':
-        uploadPhoto.classList.add('effects__preview--marvin');
-        break;
-      case 'phobos':
-        uploadPhoto.classList.add('effects__preview--phobos');
-        break;
-      case 'heat':
-        uploadPhoto.classList.add('effects__preview--heat');
-        break;
-    }
-  });
+  effects.addEventListener('click', onPictureSettings);
 };
 
 var effectsItemsSwitch = function () {
