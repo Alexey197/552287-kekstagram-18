@@ -236,28 +236,28 @@ var onPinMove = function (evt) {
   document.addEventListener('mouseup', onMouseUp);
 };
 
-var changeEffects = function () {
-  if (effects.querySelector('input:checked').value !== 'none') {
-    effectSlider.classList.remove('hidden');
-  }
-  switch (effects.querySelector('input:checked').value) {
-    case 'chrome':
-      uploadPhoto.classList.add('effects__preview--chrome');
-      break;
-    case 'sepia':
-      uploadPhoto.classList.add('effects__preview--sepia');
-      break;
-    case 'marvin':
-      uploadPhoto.classList.add('effects__preview--marvin');
-      break;
-    case 'phobos':
-      uploadPhoto.classList.add('effects__preview--phobos');
-      break;
-    case 'heat':
-      uploadPhoto.classList.add('effects__preview--heat');
-      break;
-  }
-};
+// var changeEffects = function () {
+//   if (effects.querySelector('input:checked').value !== 'none') {
+//     effectSlider.classList.remove('hidden');
+//   }
+//   switch (effects.querySelector('input:checked').value) {
+//     case 'chrome':
+//       uploadPhoto.classList.add('effects__preview--chrome');
+//       break;
+//     case 'sepia':
+//       uploadPhoto.classList.add('effects__preview--sepia');
+//       break;
+//     case 'marvin':
+//       uploadPhoto.classList.add('effects__preview--marvin');
+//       break;
+//     case 'phobos':
+//       uploadPhoto.classList.add('effects__preview--phobos');
+//       break;
+//     case 'heat':
+//       uploadPhoto.classList.add('effects__preview--heat');
+//       break;
+//   }
+// };
 
 var formOpen = function () {
   imageUploadOverlay.classList.remove('visually-hidden');
@@ -271,7 +271,29 @@ var formOpen = function () {
   for (var i = 0; i < filters.length; i++) {
     effectsItems[i].addEventListener('change', effectsItemsSwitch);
   }
-  effects.addEventListener('click', changeEffects);
+  effects.addEventListener('click', function (evt) {
+    var target = evt.target;
+    if (target.value !== 'none') {
+      effectSlider.classList.remove('hidden');
+    }
+    switch (target.value) {
+      case 'chrome':
+        uploadPhoto.classList.add('effects__preview--chrome');
+        break;
+      case 'sepia':
+        uploadPhoto.classList.add('effects__preview--sepia');
+        break;
+      case 'marvin':
+        uploadPhoto.classList.add('effects__preview--marvin');
+        break;
+      case 'phobos':
+        uploadPhoto.classList.add('effects__preview--phobos');
+        break;
+      case 'heat':
+        uploadPhoto.classList.add('effects__preview--heat');
+        break;
+    }
+  });
 };
 
 var effectsItemsSwitch = function () {
