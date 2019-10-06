@@ -35,6 +35,14 @@ var commentsParams = {
   NAMES: ['Артем', 'Иван', 'Лариса', 'Виктор', 'Илья', 'Мария']
 };
 
+var errorCodesText = {
+  'hashtags_unique': 'Один и тот же хэш-тег не может быть использован дважды.',
+  'hashtags_amount': 'Нельзя указать больше пяти хэш-тегов.',
+  'hashtag_length': 'Максимальная длина одного хэш-тега 20 символов, включая решётку.',
+  'hashtag_diez': 'Хеш-тег не может состоять только из одной решётки.',
+  'hashtag_start_dies': 'Хэш-тег начинается с символа # (решётка).'
+};
+
 var filters = {
   NONE: {
     CLASS_NAME: 'effects__preview--none',
@@ -79,6 +87,13 @@ var filters = {
   }
 };
 
+var scale = {
+  MAX_VALUE: 100,
+  MIN_VALUE: 25,
+  STEP: 25,
+  SCALE_UNIT: '%'
+};
+
 var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
 var similarListElement = document.querySelector('.pictures');
 var bigPicture = document.querySelector('.big-picture');
@@ -95,6 +110,9 @@ var closeFormButton = imageUploadForm.querySelector('.img-upload__cancel');
 var textHashtags = imageUploadForm.querySelector('.text__hashtags');
 var textDescription = imageUploadForm.querySelector('.text__description');
 var uploadPhoto = imageUploadForm.querySelector('.img-upload__preview img');
+var scaleSmaller = imageUploadForm.querySelector('.scale__control--smaller');
+var scaleBigger = imageUploadForm.querySelector('.scale__control--bigger');
+var scaleValue = imageUploadForm.querySelector('.scale__control--value');
 
 var getRandomArrElement = function (arr) {
   var arrElement = Math.floor(Math.random() * arr.length);
@@ -269,6 +287,29 @@ var effectsItemsSwitch = function () {
   pinHandle.style.left = pinHandleParams.MIN_VALUE + pinHandleParams.RELATIVE_VALUE;
 };
 
+// var setPictureSize = function (param) {
+//   scaleValue.value = param + scale.SCALE_UNIT;
+//   uploadPhoto.style.transform = ('scale(' + param / 100 + ')');
+// };
+
+var setScaleDecrease = function () {
+  var scaleValueNumber = parseInt(scaleValue.value, 10);
+  if (scaleValueNumber > scale.MIN_VALUE) {
+    scaleValueNumber -= scale.STEP;
+  }
+  uploadPhoto.style.transform = ('scale(' + scaleValueNumber / 100 + ')');
+  scaleValue.value = scaleValueNumber + scale.SCALE_UNIT;
+};
+
+var setScaleIncrease = function () {
+  var scaleValueNumber = parseInt(scaleValue.value, 10);
+  if (scaleValueNumber < scale.MAX_VALUE) {
+    scaleValueNumber += scale.STEP;
+  }
+  uploadPhoto.style.transform = ('scale(' + scaleValueNumber / 100 + ')');
+  scaleValue.value = scaleValueNumber + scale.SCALE_UNIT;
+};
+
 var formOpen = function () {
   imageUploadOverlay.classList.remove('visually-hidden');
   pinHandle.addEventListener('mousedown', onPinMove);
@@ -277,12 +318,15 @@ var formOpen = function () {
   imageUploadForm.addEventListener('invalid', function (e) {
     e.target.classList.add('red');
   }, true);
-  closeForm();
   for (var i = 0; i < effectsItems.length; i++) {
     effectsItems[i].addEventListener('change', effectsItemsSwitch);
   }
   effects.addEventListener('change', onPictureSettings);
   pinHandle.addEventListener('mouseup', onPinMove);
+  scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
+  scaleSmaller.addEventListener('click', setScaleDecrease);
+  scaleBigger.addEventListener('click', setScaleIncrease);
+  closeForm();
 };
 
 var closeForm = function () {
@@ -292,6 +336,17 @@ var closeForm = function () {
     textHashtags.removeEventListener('change', hashtagsValidation);
     textHashtags.removeEventListener('blur', hashtagsValidation);
     textDescription.removeEventListener('blur', descriptionValidation);
+    imageUploadForm.removeEventListener('invalid', function (e) {
+      e.target.classList.add('red');
+    }, true);
+    for (var i = 0; i < effectsItems.length; i++) {
+      effectsItems[i].removeEventListener('change', effectsItemsSwitch);
+    }
+    effects.removeEventListener('change', onPictureSettings);
+    pinHandle.removeEventListener('mouseup', onPinMove);
+    scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
+    scaleSmaller.removeEventListener('click', setScaleDecrease);
+    scaleBigger.removeEventListener('click', setScaleIncrease);
   });
 };
 
@@ -329,14 +384,6 @@ var hashtagsValidation = function () {
       errorCodes['hashtag_start_dies'] = true;
     }
   }
-
-  var errorCodesText = {
-    'hashtags_unique': 'Один и тот же хэш-тег не может быть использован дважды.',
-    'hashtags_amount': 'Нельзя указать больше пяти хэш-тегов.',
-    'hashtag_length': 'Максимальная длина одного хэш-тега 20 символов, включая решётку.',
-    'hashtag_diez': 'Хеш-тег не может состоять только из одной решётки.',
-    'hashtag_start_dies': 'Хэш-тег начинается с символа # (решётка).'
-  };
 
   Object.keys(errorCodes).forEach(function (it) {
     if (errorCodes[it]) {
