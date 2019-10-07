@@ -99,6 +99,7 @@ var similarListElement = document.querySelector('.pictures');
 var bigPicture = document.querySelector('.big-picture');
 var bigPictureComments = document.querySelector('.social__comments');
 var bigPictureComment = document.querySelector('.social__comment');
+var bigPictureCancel = document.querySelector('.big-picture__cancel');
 var imageUploadForm = document.querySelector('.img-upload__form');
 var imageUpLoadInput = imageUploadForm.querySelector('.img-upload__input');
 var imageUploadOverlay = imageUploadForm.querySelector('.img-upload__overlay');
@@ -218,8 +219,6 @@ var getBigPhotoElement = function (photo) {
   });
 
   bigPictureComments.appendChild(fragment);
-  bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
-  bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
 };
 
 var onPinMove = function (evt) {
@@ -286,11 +285,6 @@ var onPictureSettings = function () {
 var effectsItemsSwitch = function () {
   pinHandle.style.left = pinHandleParams.MIN_VALUE + pinHandleParams.RELATIVE_VALUE;
 };
-
-// var setPictureSize = function (param) {
-//   scaleValue.value = param + scale.SCALE_UNIT;
-//   uploadPhoto.style.transform = ('scale(' + param / 100 + ')');
-// };
 
 var setScaleDecrease = function () {
   var scaleValueNumber = parseInt(scaleValue.value, 10);
@@ -401,10 +395,24 @@ var descriptionValidation = function () {
   }
 };
 
+var showBigPhoto = function () {
+  bigPicture.classList.remove('hidden');
+  bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
+  bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
+  getBigPhotoElement(getPhotosArr(QUANTITY)[0]);
+};
+
+var hideBigPhoto = function () {
+  bigPictureCancel.addEventListener('click', function () {
+    bigPicture.classList.add('hidden');
+  });
+};
+
 var initApp = function () {
   var photoArr = getPhotosArr(QUANTITY);
   similarListElement.appendChild(createPhotoElements(photoArr));
-  getBigPhotoElement(photoArr[0]);
+  showBigPhoto(photoArr[0]);
+  hideBigPhoto();
   imageUpLoadInput.addEventListener('change', function () {
     imageUploadOverlay.classList.remove('hidden');
     effectSlider.classList.add('hidden');
