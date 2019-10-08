@@ -119,7 +119,6 @@ var uploadPhoto = imageUploadForm.querySelector('.img-upload__preview img');
 var scaleSmaller = imageUploadForm.querySelector('.scale__control--smaller');
 var scaleBigger = imageUploadForm.querySelector('.scale__control--bigger');
 var scaleValue = imageUploadForm.querySelector('.scale__control--value');
-var socialComment = imageUploadForm.querySelector('.social__footer-text');
 
 var getRandomArrElement = function (arr) {
   var arrElement = Math.floor(Math.random() * arr.length);
@@ -222,6 +221,7 @@ var getBigPhotoElement = function (photo) {
   bigPicture.querySelector('.likes-count').textContent = photo.likes;
   bigPicture.querySelector('.comments-count').textContent = photo.comments;
   bigPicture.querySelector('.social__caption').textContent = photo.description;
+  bigPicture.querySelector('.social__footer-text').addEventListener('blur', socialCommentValidation);
   var fragment = document.createDocumentFragment();
   getRemoveChildren(bigPictureComments);
   photo.comments.forEach(function (item) {
@@ -411,7 +411,6 @@ var showBigPhoto = function (photo) {
   getBigPhotoElement(photo);
   bigPictureCancel.addEventListener('keydown', onBigPhotoEscPress);
   bigPictureCancel.addEventListener('click', hideBigPhoto);
-  socialCommentValidation();
 };
 
 var hideBigPhoto = function () {
@@ -433,10 +432,10 @@ var onSmallPhotoEntPress = function (evt) {
 };
 
 var socialCommentValidation = function () {
-  if (socialComment.value.length > 140) {
-    socialComment.setCustomValidity('Длина комментария не может составлять больше 140 символов.');
+  if (bigPicture.querySelector('.social__footer-text').value.length > 140) {
+    bigPicture.querySelector('.social__footer-text').setCustomValidity('Длина комментария не может составлять больше 14 символов.');
   } else {
-    socialComment.setCustomValidity('');
+    bigPicture.querySelector('.social__footer-text').setCustomValidity('');
   }
 };
 
