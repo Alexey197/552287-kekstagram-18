@@ -119,7 +119,6 @@ var uploadPhoto = imageUploadForm.querySelector('.img-upload__preview img');
 var scaleSmaller = imageUploadForm.querySelector('.scale__control--smaller');
 var scaleBigger = imageUploadForm.querySelector('.scale__control--bigger');
 var scaleValue = imageUploadForm.querySelector('.scale__control--value');
-
 var getRandomArrElement = function (arr) {
   var arrElement = Math.floor(Math.random() * arr.length);
   return arr[arrElement];
@@ -222,6 +221,12 @@ var getBigPhotoElement = function (photo) {
   bigPicture.querySelector('.comments-count').textContent = photo.comments;
   bigPicture.querySelector('.social__caption').textContent = photo.description;
   bigPicture.querySelector('.social__footer-text').setAttribute('maxlength', '140');
+  bigPicture.querySelector('.social__footer-text').addEventListener('focus', function () {
+    document.removeEventListener('keydown', onBigPhotoEscPress);
+  });
+  bigPicture.querySelector('.social__footer-text').addEventListener('blur', function () {
+    document.addEventListener('keydown', onBigPhotoEscPress);
+  });
   var fragment = document.createDocumentFragment();
   getRemoveChildren(bigPictureComments);
   photo.comments.forEach(function (item) {
