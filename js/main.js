@@ -32,7 +32,8 @@ var commentsParams = {
     'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
     'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
     'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'],
-  NAMES: ['Артем', 'Иван', 'Лариса', 'Виктор', 'Илья', 'Мария']
+  NAMES: ['Артем', 'Иван', 'Лариса', 'Виктор', 'Илья', 'Мария'],
+  MAX_LENGTH: '140'
 };
 
 var errorCodesText = {
@@ -220,7 +221,7 @@ var getBigPhotoElement = function (photo) {
   bigPicture.querySelector('.likes-count').textContent = photo.likes;
   bigPicture.querySelector('.comments-count').textContent = photo.comments;
   bigPicture.querySelector('.social__caption').textContent = photo.description;
-  bigPicture.querySelector('.social__footer-text').setAttribute('maxlength', '140');
+  bigPicture.querySelector('.social__footer-text').setAttribute('maxlength', commentsParams.MAX_LENGTH);
   bigPicture.querySelector('.social__footer-text').addEventListener('focus', function () {
     document.removeEventListener('keydown', onBigPhotoEscPress);
   });
