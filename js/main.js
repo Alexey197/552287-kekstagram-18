@@ -94,9 +94,9 @@ var scale = {
   SCALE_UNIT: '%'
 };
 
-var KEYCODE = {
-  ESC: 27,
-  ENTER: 13
+var KeyCode = {
+  Esc: 27,
+  Enter: 13
 };
 
 var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
@@ -221,7 +221,7 @@ var getBigPhotoElement = function (photo) {
   bigPicture.querySelector('.likes-count').textContent = photo.likes;
   bigPicture.querySelector('.comments-count').textContent = photo.comments;
   bigPicture.querySelector('.social__caption').textContent = photo.description;
-  bigPicture.querySelector('.social__footer-text').addEventListener('blur', socialCommentValidation);
+  bigPicture.querySelector('.social__footer-text').setAttribute('maxlength', '140');
   var fragment = document.createDocumentFragment();
   getRemoveChildren(bigPictureComments);
   photo.comments.forEach(function (item) {
@@ -295,13 +295,17 @@ var effectsItemsSwitch = function () {
   pinHandle.style.left = pinHandleParams.MIN_VALUE + pinHandleParams.RELATIVE_VALUE;
 };
 
+var setScaleValue = function (value) {
+  uploadPhoto.style.transform = ('scale(' + value / 100 + ')');
+  scaleValue.value = value + scale.SCALE_UNIT;
+};
+
 var setScaleDecrease = function () {
   var scaleValueNumber = parseInt(scaleValue.value, 10);
   if (scaleValueNumber > scale.MIN_VALUE) {
     scaleValueNumber -= scale.STEP;
   }
-  uploadPhoto.style.transform = ('scale(' + scaleValueNumber / 100 + ')');
-  scaleValue.value = scaleValueNumber + scale.SCALE_UNIT;
+  setScaleValue(scaleValueNumber);
 };
 
 var setScaleIncrease = function () {
@@ -309,8 +313,7 @@ var setScaleIncrease = function () {
   if (scaleValueNumber < scale.MAX_VALUE) {
     scaleValueNumber += scale.STEP;
   }
-  uploadPhoto.style.transform = ('scale(' + scaleValueNumber / 100 + ')');
-  scaleValue.value = scaleValueNumber + scale.SCALE_UNIT;
+  setScaleValue(scaleValueNumber);
 };
 
 var formOpen = function () {
@@ -321,9 +324,9 @@ var formOpen = function () {
   imageUploadForm.addEventListener('invalid', function (e) {
     e.target.classList.add('red');
   }, true);
-  for (var i = 0; i < effectsItems.length; i++) {
-    effectsItems[i].addEventListener('change', effectsItemsSwitch);
-  }
+  effectsItems.forEach(function (item) {
+    item.addEventListener('change', effectsItemsSwitch);
+  });
   effects.addEventListener('change', onPictureSettings);
   pinHandle.addEventListener('mouseup', onPinMove);
   scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
@@ -342,9 +345,9 @@ var closeForm = function () {
     imageUploadForm.removeEventListener('invalid', function (e) {
       e.target.classList.add('red');
     }, true);
-    for (var i = 0; i < effectsItems.length; i++) {
-      effectsItems[i].removeEventListener('change', effectsItemsSwitch);
-    }
+    effectsItems.forEach(function (item) {
+      item.removeEventListener('click', effectsItemsSwitch);
+    });
     effects.removeEventListener('change', onPictureSettings);
     pinHandle.removeEventListener('mouseup', onPinMove);
     scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
@@ -409,33 +412,25 @@ var showBigPhoto = function (photo) {
   bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
   bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
   getBigPhotoElement(photo);
-  bigPictureCancel.addEventListener('keydown', onBigPhotoEscPress);
+  document.addEventListener('keydown', onBigPhotoEscPress);
   bigPictureCancel.addEventListener('click', hideBigPhoto);
 };
 
 var hideBigPhoto = function () {
   bigPicture.classList.add('hidden');
-  bigPictureCancel.removeEventListener('keydown', onBigPhotoEscPress);
+  document.removeEventListener('keydown', onBigPhotoEscPress);
   bigPictureCancel.removeEventListener('click', hideBigPhoto);
 };
 
 var onBigPhotoEscPress = function (evt) {
-  if (evt.keyCode === KEYCODE.ESC) {
+  if (evt.keyCode === KeyCode.Esc) {
     hideBigPhoto();
   }
 };
 
 var onSmallPhotoEntPress = function (evt) {
-  if (evt.keyCode === KEYCODE.ENTER) {
+  if (evt.keyCode === KeyCode.Enter) {
     showBigPhoto();
-  }
-};
-
-var socialCommentValidation = function () {
-  if (bigPicture.querySelector('.social__footer-text').value.length > 140) {
-    bigPicture.querySelector('.social__footer-text').setCustomValidity('Длина комментария не может составлять больше 14 символов.');
-  } else {
-    bigPicture.querySelector('.social__footer-text').setCustomValidity('');
   }
 };
 
