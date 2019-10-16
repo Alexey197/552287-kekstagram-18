@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  // Создание DOM-элемента
 
   var QUANTITY = 25;
   var similarListElement = document.querySelector('.pictures');

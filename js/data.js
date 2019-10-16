@@ -25,33 +25,16 @@
       'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
       'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
       'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'],
-    NAMES: ['Артем', 'Иван', 'Лариса', 'Виктор', 'Илья', 'Мария'],
-    MAX_LENGTH: '140'
+    NAMES: ['Артем', 'Иван', 'Лариса', 'Виктор', 'Илья', 'Мария']
   };
-  var getRandomArrElement = function (arr) {
-    var arrElement = Math.floor(Math.random() * arr.length);
-    return arr[arrElement];
-  };
-
-  // Случайное число от max до min
-
-  var getRandomNumber = function (min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
-  // Создает объект комментария
 
   var getCommentsItem = function () {
     return {
-      avatar: 'img/avatar-' + getRandomNumber(avatarQuantity.MIN_NUMBER, avatarQuantity.MAX_NUMBER) + '.svg',
-      message: getRandomArrElement(commentsParams.SENTENCES),
-      name: getRandomArrElement(commentsParams.NAMES)
+      avatar: 'img/avatar-' + window.util.getRandomNumber(avatarQuantity.MIN_NUMBER, avatarQuantity.MAX_NUMBER) + '.svg',
+      message: window.util.getRandomArrElement(commentsParams.SENTENCES),
+      name: window.util.getRandomArrElement(commentsParams.NAMES)
     };
   };
-
-  // Создает массив комментариев
 
   var getCommentsArr = function (arrLength) {
     var commentsArr = [];
@@ -65,8 +48,8 @@
     return {
       url: 'photos/' + photoNumber + '.jpg',
       description: '',
-      likes: getRandomNumber(urlParams.MIN_LIKE_NUMBER, urlParams.MAX_LIKE_NUMBER),
-      comments: getCommentsArr(getRandomNumber(commentsQuantity.MIN_NUMBER, commentsQuantity.MAX_NUMBER))
+      likes: window.util.getRandomNumber(urlParams.MIN_LIKE_NUMBER, urlParams.MAX_LIKE_NUMBER),
+      comments: getCommentsArr(window.util.getRandomNumber(commentsQuantity.MIN_NUMBER, commentsQuantity.MAX_NUMBER))
     };
   };
   window.data = {
@@ -76,7 +59,6 @@
         photos.push(getPhotoItem(i));
       }
       return photos;
-    },
-    COMMENTS: commentsParams
+    }
   };
 })();

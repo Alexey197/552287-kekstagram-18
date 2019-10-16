@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-
+  var COMMENTS_LENGTH = '140';
   var bigPicture = document.querySelector('.big-picture');
   var bigPictureComments = document.querySelector('.social__comments');
   var bigPictureComment = document.querySelector('.social__comment');
@@ -15,20 +15,12 @@
     return commentElement;
   };
 
-  // Удаляем
-
-  var getRemoveChildren = function (element) {
-    while (element.firstChild) {
-      element.removeChild(element.firstChild);
-    }
-  };
-
   var getBigPhotoElement = function (photo) {
     bigPicture.querySelector('.big-picture__img img').src = photo.url;
     bigPicture.querySelector('.likes-count').textContent = photo.likes;
     bigPicture.querySelector('.comments-count').textContent = photo.comments;
     bigPicture.querySelector('.social__caption').textContent = photo.description;
-    bigPicture.querySelector('.social__footer-text').setAttribute('maxlength', window.data.COMMENTS.MAX_LENGTH);
+    bigPicture.querySelector('.social__footer-text').setAttribute('maxlength', COMMENTS_LENGTH);
     bigPicture.querySelector('.social__footer-text').addEventListener('focus', function () {
       document.removeEventListener('keydown', onBigPhotoEscPress);
     });
@@ -36,7 +28,7 @@
       document.addEventListener('keydown', onBigPhotoEscPress);
     });
     var fragment = document.createDocumentFragment();
-    getRemoveChildren(bigPictureComments);
+    window.util.getRemoveChildren(bigPictureComments);
     photo.comments.forEach(function (item) {
       fragment.appendChild(getCommentElement(item));
     });

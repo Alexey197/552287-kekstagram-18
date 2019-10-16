@@ -13,6 +13,20 @@
       if (evt.keyCode === ENTER_KEYCODE) {
         action();
       }
+    },
+    getRandomArrElement: function (arr) {
+      var arrElement = Math.floor(Math.random() * arr.length);
+      return arr[arrElement];
+    },
+    getRandomNumber: function (min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+    getRemoveChildren: function (element) {
+      while (element.firstChild) {
+        element.removeChild(element.firstChild);
+      }
     }
   };
 })();
