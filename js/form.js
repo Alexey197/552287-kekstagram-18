@@ -72,6 +72,7 @@
   var pinHandle = imageUploadForm.querySelector('.effect-level__pin');
   var effectsItems = imageUploadForm.querySelectorAll('.effects__radio');
   var effects = imageUploadForm.querySelector('.effects');
+  var effectLevelDepth = imageUploadForm.querySelector('.effect-level__depth');
   var effectSlider = imageUploadForm.querySelector('.effect-level');
   var closeFormButton = imageUploadForm.querySelector('.img-upload__cancel');
   var textHashtags = imageUploadForm.querySelector('.text__hashtags');
@@ -96,6 +97,7 @@
         currentPinPosition = pinHandleParams.MAX_VALUE;
       }
       pinHandle.style.left = currentPinPosition + '%';
+      effectLevelDepth.style.width = currentPinPosition + '%';
       var effectPinValue = Math.round(currentPinPosition);
       var changePinHandleObj = {
         'chrome': 'grayscale(' + effectPinValue / pinHandleParams.MAX_VALUE + ')',
@@ -144,7 +146,8 @@
   };
 
   var effectsItemsSwitch = function () {
-    pinHandle.style.left = pinHandleParams.MIN_VALUE + pinHandleParams.RELATIVE_VALUE;
+    pinHandle.style.left = pinHandleParams.MAX_VALUE + pinHandleParams.RELATIVE_VALUE;
+    effectLevelDepth.style.width = pinHandleParams.MAX_VALUE + pinHandleParams.RELATIVE_VALUE;
   };
 
   var setScaleValue = function (value) {

@@ -16,7 +16,6 @@
     var photoArr = window.data.getPhotosArr(QUANTITY);
     similarListElement.appendChild(createPhotoElements(photoArr));
   };
-
   initApp();
 
 })();
