@@ -176,6 +176,7 @@
   };
   var formErrorHandler = function (errorMessage) {
     window.messages.getError(errorMessage);
+    closeForm();
   };
 
   var onFormSubmitHandler = function (evt) {

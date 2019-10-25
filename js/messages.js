@@ -6,6 +6,26 @@
   var mainContainer = document.querySelector('main');
   var getErrorMessage = function (errorMessage) {
     var errorElement = error.cloneNode(true);
+    var errorButtons = errorElement.querySelectorAll('.error__button');
+    var removeErrorElement = function () {
+      mainContainer.removeChild(errorElement);
+    };
+    errorButtons.forEach(function (item) {
+      item.addEventListener('click', function (evt) {
+        evt.preventDefault();
+        removeErrorElement();
+      });
+    });
+    document.addEventListener('keydown', function (evt) {
+      if (mainContainer.contains(errorElement)) {
+        window.util.isEscEvent(evt, removeErrorElement);
+      }
+    });
+    document.addEventListener('click', function () {
+      if (mainContainer.contains(errorElement)) {
+        removeErrorElement();
+      }
+    });
     errorElement.querySelector('.error__title').textContent = errorMessage;
     mainContainer.insertAdjacentElement('afterbegin', errorElement);
   };
