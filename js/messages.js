@@ -14,7 +14,20 @@
     var successButton = successElement.querySelector('.success__button');
     successButton.addEventListener('click', function (evt) {
       evt.preventDefault();
+      removeSuccessElement();
+    });
+    var removeSuccessElement = function () {
       mainContainer.removeChild(successElement);
+    };
+    document.addEventListener('keydown', function (evt) {
+      if (mainContainer.contains(successElement)) {
+        window.util.isEscEvent(evt, removeSuccessElement);
+      }
+    });
+    document.addEventListener('click', function () {
+      if (mainContainer.contains(successElement)) {
+        removeSuccessElement();
+      }
     });
     mainContainer.insertAdjacentElement('afterbegin', successElement);
   };
