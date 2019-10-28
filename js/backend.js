@@ -3,6 +3,7 @@
 (function () {
   var xhrParams = {
     URL_LOAD: 'https://js.dump.academy/kekstagram/data',
+    URL_SAVE: 'https://js.dump.academy/kekstagram',
     ERROR_CODE: 200
   };
   var getBackendXhr = function (onLoad, onError) {
@@ -26,6 +27,11 @@
       var xhr = getBackendXhr(onLoad, onError);
       xhr.open('GET', xhrParams.URL_LOAD);
       xhr.send();
+    },
+    save: function (data, onLoad, onError) {
+      var xhr = getBackendXhr(onLoad, onError);
+      xhr.open('POST', xhrParams.URL_SAVE);
+      xhr.send(data);
     }
   };
 })();

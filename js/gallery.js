@@ -12,7 +12,7 @@
 
 
   var showPhotos = function () {
-    window.backend.load(successHandler, window.message.getError);
+    window.backend.load(successHandler, window.messages.getError);
   };
   showPhotos();
 })();

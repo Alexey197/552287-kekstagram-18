@@ -170,9 +170,21 @@
     }
     setScaleValue(scaleValueNumber);
   };
+  var formSuccessHandler = function () {
+    window.messages.getSuccess();
+    closeForm();
+  };
+  var formErrorHandler = function (errorMessage) {
+    window.messages.getError(errorMessage);
+    closeForm();
+  };
 
+  var onFormSubmitHandler = function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(imageUploadForm), formSuccessHandler, formErrorHandler);
+  };
   var formOpen = function () {
-    imageUploadOverlay.classList.remove('visually-hidden');
+    imageUploadOverlay.classList.remove('hidden');
     pinHandle.addEventListener('mousedown', onPinMove);
     textHashtags.addEventListener('blur', hashtagsValidation);
     textDescription.addEventListener('blur', descriptionValidation);
@@ -187,28 +199,28 @@
     scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
     scaleSmaller.addEventListener('click', setScaleDecrease);
     scaleBigger.addEventListener('click', setScaleIncrease);
-    closeForm();
+    closeFormButton.addEventListener('click', closeForm);
+    imageUploadForm.addEventListener('submit', onFormSubmitHandler);
   };
 
   var closeForm = function () {
-    closeFormButton.addEventListener('click', function () {
-      imageUploadOverlay.classList.add('visually-hidden');
-      pinHandle.removeEventListener('mousedown', onPinMove);
-      textHashtags.removeEventListener('change', hashtagsValidation);
-      textHashtags.removeEventListener('blur', hashtagsValidation);
-      textDescription.removeEventListener('blur', descriptionValidation);
-      imageUploadForm.removeEventListener('invalid', function (e) {
-        e.target.classList.add('red');
-      }, true);
-      effectsItems.forEach(function (item) {
-        item.removeEventListener('click', effectsItemsSwitch);
-      });
-      effects.removeEventListener('change', onPictureSettings);
-      pinHandle.removeEventListener('mouseup', onPinMove);
-      scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
-      scaleSmaller.removeEventListener('click', setScaleDecrease);
-      scaleBigger.removeEventListener('click', setScaleIncrease);
+    imageUploadOverlay.classList.add('hidden');
+    pinHandle.removeEventListener('mousedown', onPinMove);
+    textHashtags.removeEventListener('change', hashtagsValidation);
+    textHashtags.removeEventListener('blur', hashtagsValidation);
+    textDescription.removeEventListener('blur', descriptionValidation);
+    imageUploadForm.removeEventListener('invalid', function (e) {
+      e.target.classList.add('red');
+    }, true);
+    effectsItems.forEach(function (item) {
+      item.removeEventListener('click', effectsItemsSwitch);
     });
+    effects.removeEventListener('change', onPictureSettings);
+    pinHandle.removeEventListener('mouseup', onPinMove);
+    scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
+    scaleSmaller.removeEventListener('click', setScaleDecrease);
+    scaleBigger.removeEventListener('click', setScaleIncrease);
+    imageUploadForm.removeEventListener('submit', onFormSubmitHandler);
   };
 
   var isUniqueElem = function (item, index, curArr) {
