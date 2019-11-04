@@ -18,6 +18,19 @@
       while (element.firstChild) {
         element.removeChild(element.firstChild);
       }
+    },
+    debounce: function (cb, interval) {
+      var lastTimeout = null;
+
+      return function () {
+        var parameters = arguments;
+        if (lastTimeout) {
+          window.clearTimeout(lastTimeout);
+        }
+        lastTimeout = window.setTimeout(function () {
+          cb.apply(null, parameters);
+        }, interval);
+      };
     }
   };
 })();
