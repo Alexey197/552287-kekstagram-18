@@ -2,7 +2,7 @@
 
 (function () {
   var similarListElement = document.querySelector('.pictures');
-  var filters = document.querySelector('.img-filters');
+  var imageFilters = document.querySelector('.img-filters');
   var picturesNodes = [];
   var pictures = [];
   var renderListPictures = function (photos) {
@@ -24,8 +24,8 @@
 
   var successHandler = function (data) {
     pictures = data.slice();
-    window.gallery.update(data);
-    filters.classList.remove('img-filters--inactive');
+    window.gallery.update();
+    imageFilters.classList.remove('img-filters--inactive');
   };
   window.backend.load(successHandler, window.messages.getError);
 

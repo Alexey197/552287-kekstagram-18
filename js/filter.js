@@ -3,27 +3,15 @@
 (function () {
   var PICTURES_AMOUNT = 10;
   var DEBOUNCE_INTERVAL = 500;
-  var filterType = 'filter-popular';
+  var FILTER_TYPE = 'filter-popular';
   var buttonForm = document.querySelector('.img-filters__form');
-  var filtersButtons = document.querySelectorAll('.img-filters__button');
-  var filtersButtonActive = 'img-filters__button--active';
-  var filterPopularElement = document.getElementById('filter-popular');
-  var filterRandomElement = document.getElementById('filter-random');
-  var filterDiscussedElement = document.getElementById('filter-discussed');
+  var activeButton = buttonForm.querySelector('.img-filters__button--active');
 
-  var changeButtonActivity = function (element) {
-    filtersButtons.forEach(function (item) {
-      item.classList.remove(filtersButtonActive);
-    });
-    element.classList.add(filtersButtonActive);
-  };
-
-  var popularFilter = function (elements) {
-    changeButtonActivity(filterPopularElement);
+  var getPopularFilter = function (elements) {
     return elements;
   };
 
-  var randomFilter = function (elements) {
+  var getRandomFilter = function (elements) {
     var sourcePictures = elements.slice();
     var randomPictures = [];
 
@@ -33,36 +21,37 @@
       randomPictures.push(randomElement);
       sourcePictures.splice(randomIndex, 1);
     }
-    changeButtonActivity(filterRandomElement);
     return randomPictures;
   };
 
-  var discussedFilter = function (elements) {
+  var getDiscussedFilter = function (elements) {
     var discussedPictures = elements.slice();
     discussedPictures.sort(function (a, b) {
       return b.comments.length - a.comments.length;
     });
-    changeButtonActivity(filterDiscussedElement);
     return discussedPictures;
   };
 
-  var filterObj = {
-    'filter-popular': popularFilter,
-    'filter-random': randomFilter,
-    'filter-discussed': discussedFilter
+  var filters = {
+    'filter-popular': getPopularFilter,
+    'filter-random': getRandomFilter,
+    'filter-discussed': getDiscussedFilter
   };
 
-  var filterMap = function (arr) {
-    var filteredArr = filterObj[filterType](arr);
+  var getFilteredArr = function (arr) {
+    var filteredArr = filters[FILTER_TYPE](arr);
     return filteredArr;
   };
 
   var filtersButtonClickHandler = function (evt) {
-    filterType = evt.target.id;
+    FILTER_TYPE = evt.target.id;
+    activeButton.classList.remove('img-filters__button--active');
+    var currentActiveButton = evt.target;
+    currentActiveButton.classList.add('img-filters__button--active');
     window.gallery.update();
   };
 
   buttonForm.addEventListener('click', window.util.debounce(filtersButtonClickHandler, DEBOUNCE_INTERVAL));
 
-  window.filter = filterMap;
+  window.filter = getFilteredArr;
 })();
