@@ -2,17 +2,40 @@
 
 (function () {
   var similarListElement = document.querySelector('.pictures');
-  var successHandler = function (photos) {
+  var imageFilters = document.querySelector('.img-filters');
+  var picturesNodes = [];
+  var pictures = [];
+  var renderListPictures = function (photos) {
     var fragment = document.createDocumentFragment();
     photos.forEach(function (item) {
-      fragment.appendChild(window.picture.getPhotoElement(item));
+      var node = window.picture.getPhotoElement(item);
+      fragment.appendChild(node);
+      picturesNodes.push(node);
     });
-    similarListElement.appendChild(fragment);
+    return fragment;
   };
 
-
-  var showPhotos = function () {
-    window.backend.load(successHandler, window.messages.getError);
+  var removePictureNodes = function () {
+    picturesNodes.forEach(function (node) {
+      node.remove();
+    });
+    picturesNodes = [];
   };
-  showPhotos();
+
+  var successHandler = function (data) {
+    pictures = data.slice();
+    window.gallery.update();
+    imageFilters.classList.remove('img-filters--inactive');
+  };
+  window.backend.load(successHandler, window.messages.getError);
+
+  window.gallery = {
+    update: function () {
+      removePictureNodes();
+      var data = window.filter(pictures);
+      similarListElement.appendChild(renderListPictures(data));
+    }
+  };
 })();
+
+
