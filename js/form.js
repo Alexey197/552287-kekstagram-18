@@ -1,5 +1,7 @@
 'use strict';
 (function () {
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
   var pinHandleParams = {
     MIN_VALUE: 0,
     MAX_VALUE: 100,
@@ -67,6 +69,8 @@
   };
 
   var imageUploadForm = document.querySelector('.img-upload__form');
+  var imgUploadPreview = imageUploadForm.querySelector('.img-upload__preview img');
+  var effectsPreview = imageUploadForm.querySelectorAll('.effects__preview');
   var imageUpLoadInput = imageUploadForm.querySelector('.img-upload__input');
   var imageUploadOverlay = imageUploadForm.querySelector('.img-upload__overlay');
   var pinHandle = imageUploadForm.querySelector('.effect-level__pin');
@@ -82,6 +86,32 @@
   var scaleBigger = imageUploadForm.querySelector('.scale__control--bigger');
   var scaleValue = imageUploadForm.querySelector('.scale__control--value');
 
+  var addImage = function () {
+    var file = imageUploadForm.filename.files[0];
+    var fileName = file.name.toLowerCase();
+
+    if (!file) {
+      return;
+    }
+
+    var matches = FILE_TYPES.some(function (item) {
+      return fileName.endsWith(item);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        imgUploadPreview.src = reader.result;
+
+        effectsPreview.forEach(function (image) {
+          image.style.backgroundImage = 'url(' + reader.result + ')';
+        });
+      });
+
+      reader.readAsDataURL(file);
+    }
+  };
 
   var onPinMove = function (evt) {
     var startPinPosition = parseFloat(pinHandle.style.left);
@@ -201,6 +231,7 @@
     scaleBigger.addEventListener('click', setScaleIncrease);
     closeFormButton.addEventListener('click', closeForm);
     imageUploadForm.addEventListener('submit', onFormSubmitHandler);
+    addImage();
   };
 
   var closeForm = function () {
