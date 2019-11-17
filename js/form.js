@@ -69,7 +69,7 @@
   };
 
   var imageUploadForm = document.querySelector('.img-upload__form');
-  var imgUploadPreview = imageUploadForm.querySelector('.img-upload__preview img');
+  var imageUploadPreview = imageUploadForm.querySelector('.img-upload__preview img');
   var effectsPreview = imageUploadForm.querySelectorAll('.effects__preview');
   var imageUpLoadInput = imageUploadForm.querySelector('.img-upload__input');
   var imageUploadOverlay = imageUploadForm.querySelector('.img-upload__overlay');
@@ -81,7 +81,6 @@
   var closeFormButton = imageUploadForm.querySelector('.img-upload__cancel');
   var textHashtags = imageUploadForm.querySelector('.text__hashtags');
   var textDescription = imageUploadForm.querySelector('.text__description');
-  var uploadPhoto = imageUploadForm.querySelector('.img-upload__preview img');
   var scaleSmaller = imageUploadForm.querySelector('.scale__control--smaller');
   var scaleBigger = imageUploadForm.querySelector('.scale__control--bigger');
   var scaleValue = imageUploadForm.querySelector('.scale__control--value');
@@ -102,7 +101,7 @@
       var reader = new FileReader();
 
       reader.addEventListener('load', function () {
-        imgUploadPreview.src = reader.result;
+        imageUploadPreview.src = reader.result;
 
         effectsPreview.forEach(function (image) {
           image.style.backgroundImage = 'url(' + reader.result + ')';
@@ -137,7 +136,7 @@
         'heat': 'brightness(' + (effectPinValue / pinHandleParams.MAX_VALUE * (filters.HEAT.MAX_VALUE - filters.HEAT.MIN_VALUE) + filters.HEAT.MIN_VALUE) + ')'
       };
       var inputValue = imageUploadForm.effect.value;
-      uploadPhoto.style.filter = changePinHandleObj[inputValue];
+      imageUploadPreview.style.filter = changePinHandleObj[inputValue];
     };
 
     var onMouseUp = function () {
@@ -158,7 +157,7 @@
 
   var changeEffects = function () {
     var inputValue = imageUploadForm.effect.value;
-    uploadPhoto.classList.add(changeEffectsObj[inputValue]);
+    imageUploadPreview.classList.add(changeEffectsObj[inputValue]);
     if (inputValue !== 'none') {
       effectSlider.classList.remove('hidden');
     }
@@ -166,13 +165,8 @@
 
   var removePictureSettings = function () {
     effectSlider.classList.add('hidden');
-    uploadPhoto.removeAttribute('class');
-    uploadPhoto.removeAttribute('style');
-  };
-
-  var onPictureSettings = function () {
-    removePictureSettings();
-    changeEffects();
+    imageUploadPreview.removeAttribute('class');
+    imageUploadPreview.removeAttribute('style');
   };
 
   var effectsItemsSwitch = function () {
@@ -181,7 +175,7 @@
   };
 
   var setScaleValue = function (value) {
-    uploadPhoto.style.transform = ('scale(' + value / 100 + ')');
+    imageUploadPreview.style.transform = ('scale(' + value / 100 + ')');
     scaleValue.value = value + scale.SCALE_UNIT;
   };
 
@@ -209,7 +203,27 @@
     closeForm();
   };
 
-  var onFormSubmitHandler = function (evt) {
+  var documentEscPressHandler = function (evt) {
+    window.util.isEscEvent(evt, closeForm);
+  };
+
+  var inputHashtagBlurHandler = function () {
+    document.addEventListener('keydown', documentEscPressHandler);
+  };
+
+  var inputHashtagFocusHandler = function () {
+    document.removeEventListener('keydown', documentEscPressHandler);
+  };
+
+  var textareaDescriptionFocusHandler = function () {
+    document.removeEventListener('keydown', documentEscPressHandler);
+  };
+
+  var textareaDescriptionBlurHandler = function () {
+    document.addEventListener('keydown', documentEscPressHandler);
+  };
+
+  var FormSubmitHandler = function (evt) {
     evt.preventDefault();
     window.backend.save(new FormData(imageUploadForm), formSuccessHandler, formErrorHandler);
   };
@@ -217,20 +231,25 @@
     imageUploadOverlay.classList.remove('hidden');
     pinHandle.addEventListener('mousedown', onPinMove);
     textHashtags.addEventListener('blur', hashtagsValidation);
+    textHashtags.addEventListener('focus', inputHashtagFocusHandler);
+    textHashtags.addEventListener('blur', inputHashtagBlurHandler);
     textDescription.addEventListener('blur', descriptionValidation);
-    imageUploadForm.addEventListener('invalid', function (e) {
-      e.target.classList.add('red');
+    textDescription.addEventListener('focus', textareaDescriptionFocusHandler);
+    textDescription.addEventListener('blur', textareaDescriptionBlurHandler);
+    imageUploadForm.addEventListener('invalid', function (evt) {
+      evt.target.classList.add('red');
     }, true);
+    document.addEventListener('keydown', documentEscPressHandler);
     effectsItems.forEach(function (item) {
       item.addEventListener('change', effectsItemsSwitch);
     });
-    effects.addEventListener('change', onPictureSettings);
+    effects.addEventListener('change', changeEffects);
     pinHandle.addEventListener('mouseup', onPinMove);
     scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
     scaleSmaller.addEventListener('click', setScaleDecrease);
     scaleBigger.addEventListener('click', setScaleIncrease);
     closeFormButton.addEventListener('click', closeForm);
-    imageUploadForm.addEventListener('submit', onFormSubmitHandler);
+    imageUploadForm.addEventListener('submit', FormSubmitHandler);
     addImage();
   };
 
@@ -240,18 +259,20 @@
     textHashtags.removeEventListener('change', hashtagsValidation);
     textHashtags.removeEventListener('blur', hashtagsValidation);
     textDescription.removeEventListener('blur', descriptionValidation);
-    imageUploadForm.removeEventListener('invalid', function (e) {
-      e.target.classList.add('red');
+    imageUploadForm.removeEventListener('invalid', function (evt) {
+      evt.target.classList.add('red');
     }, true);
+    document.removeEventListener('keydown', documentEscPressHandler);
     effectsItems.forEach(function (item) {
       item.removeEventListener('click', effectsItemsSwitch);
     });
-    effects.removeEventListener('change', onPictureSettings);
+    effects.removeEventListener('change', changeEffects);
     pinHandle.removeEventListener('mouseup', onPinMove);
     scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
     scaleSmaller.removeEventListener('click', setScaleDecrease);
     scaleBigger.removeEventListener('click', setScaleIncrease);
-    imageUploadForm.removeEventListener('submit', onFormSubmitHandler);
+    imageUploadForm.removeEventListener('submit', FormSubmitHandler);
+    removePictureSettings();
   };
 
   var isUniqueElem = function (item, index, curArr) {

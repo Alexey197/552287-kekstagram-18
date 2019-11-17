@@ -51,10 +51,10 @@
     bigPicture.querySelector('.social__caption').textContent = photo.description;
     bigPicture.querySelector('.social__footer-text').setAttribute('maxlength', COMMENTS_LENGTH);
     bigPicture.querySelector('.social__footer-text').addEventListener('focus', function () {
-      document.removeEventListener('keydown', onBigPhotoEscPress);
+      document.removeEventListener('keydown', bigPhotoEscPressHandler);
     });
     bigPicture.querySelector('.social__footer-text').addEventListener('blur', function () {
-      document.addEventListener('keydown', onBigPhotoEscPress);
+      document.addEventListener('keydown', bigPhotoEscPressHandler);
     });
 
     getBigPhotoComments(loadedComments);
@@ -64,17 +64,16 @@
     bigPicture.classList.add('hidden');
   };
 
-  var onBigPhotoEscPress = function (evt) {
+  var bigPhotoEscPressHandler = function (evt) {
     window.util.isEscEvent(evt, hideBigPhoto);
   };
 
   var bigPhotoOpenHandler = function () {
-    document.addEventListener('keydown', onBigPhotoEscPress);
     bigPictureCancel.addEventListener('click', hideBigPhoto);
   };
 
   var bigPhotoCloseHandler = function () {
-    document.removeEventListener('keydown', onBigPhotoEscPress);
+    document.removeEventListener('keydown', bigPhotoEscPressHandler);
     bigPictureCancel.removeEventListener('click', hideBigPhoto);
     socialCommentsButton.removeEventListener('click', commentsButtonClickHandler);
   };
@@ -96,7 +95,7 @@
       bigPicture.classList.remove('hidden');
       socialCommentsButton.addEventListener('click', commentsButtonClickHandler);
       bigPictureCancel.addEventListener('click', hideBigPhoto);
-      document.addEventListener('keydown', onBigPhotoEscPress);
+      document.addEventListener('keydown', bigPhotoEscPressHandler);
       getBigPhotoElement(photo);
     }
   };
