@@ -334,6 +334,5 @@
     });
     imageUploadForm.setAttribute('action', 'https://js.dump.academy/kekstagram');
   };
-
   formInit();
 })();
