@@ -155,7 +155,7 @@
     'heat': filters.HEAT.CLASS_NAME
   };
 
-  var effectsChangeHandler = function () {
+  var changeEffects = function () {
     var inputValue = imageUploadForm.effect.value;
     imageUploadPreview.classList.add(changeEffectsObj[inputValue]);
     if (inputValue !== 'none') {
@@ -168,14 +168,22 @@
     imageUploadPreview.removeAttribute('style');
   };
 
-  var effectsChangeRemoveSettingsHandler = function () {
+  var getHideSlider = function () {
     effectSlider.classList.add('hidden');
-    effectsChangeHandler();
+  };
+
+  var effectsChangeHandler = function () {
+    changeEffects();
+    getHideSlider();
+  };
+
+  var effectsItemsSwitch = function () {
+    pinHandle.style.left = pinHandleParams.MAX_VALUE + pinHandleParams.RELATIVE_VALUE;
+    effectLevelDepth.style.width = pinHandleParams.MAX_VALUE + pinHandleParams.RELATIVE_VALUE;
   };
 
   var effectsItemsSwitchHandler = function () {
-    pinHandle.style.left = pinHandleParams.MAX_VALUE + pinHandleParams.RELATIVE_VALUE;
-    effectLevelDepth.style.width = pinHandleParams.MAX_VALUE + pinHandleParams.RELATIVE_VALUE;
+    effectsItemsSwitch();
   };
 
   var setScaleValue = function (value) {
@@ -183,7 +191,7 @@
     scaleValue.value = value + scale.SCALE_UNIT;
   };
 
-  var scaleDecreaseClickHandler = function () {
+  var scaleDecrease = function () {
     var scaleValueNumber = parseInt(scaleValue.value, 10);
     if (scaleValueNumber > scale.MIN_VALUE) {
       scaleValueNumber -= scale.STEP;
@@ -191,24 +199,33 @@
     setScaleValue(scaleValueNumber);
   };
 
-  var scaleIncreaseClickHandler = function () {
+  var scaleDecreaseClickHandler = function () {
+    scaleDecrease();
+  };
+
+  var scaleIncrease = function () {
     var scaleValueNumber = parseInt(scaleValue.value, 10);
     if (scaleValueNumber < scale.MAX_VALUE) {
       scaleValueNumber += scale.STEP;
     }
     setScaleValue(scaleValueNumber);
   };
+
+  var scaleIncreaseClickHandler = function () {
+    scaleIncrease();
+  };
+
   var formSuccessHandler = function () {
     window.messages.getSuccess();
-    closeFormClickHandler();
+    closeForm();
   };
   var formErrorHandler = function (errorMessage) {
     window.messages.getError(errorMessage);
-    closeFormClickHandler();
+    closeForm();
   };
 
   var documentEscPressHandler = function (evt) {
-    window.util.isEscEvent(evt, closeFormClickHandler);
+    window.util.isEscEvent(evt, closeForm);
   };
 
   var inputHashtagBlurHandler = function () {
@@ -230,8 +247,14 @@
   var formSubmitHandler = function (evt) {
     evt.preventDefault();
     window.backend.save(new FormData(imageUploadForm), formSuccessHandler, formErrorHandler);
-    effectsChangeRemoveSettingsHandler();
+    changeEffects();
+    getHideSlider();
   };
+
+  var buttonClickCloseFormHandler = function () {
+    closeForm();
+  };
+
   var formOpen = function () {
     imageUploadOverlay.classList.remove('hidden');
     pinHandle.addEventListener('mousedown', pinMouseMoveHandler);
@@ -248,17 +271,17 @@
     effectsItems.forEach(function (item) {
       item.addEventListener('change', effectsItemsSwitchHandler);
     });
-    effects.addEventListener('change', effectsChangeRemoveSettingsHandler);
+    effects.addEventListener('change', effectsChangeHandler);
     pinHandle.addEventListener('mouseup', pinMouseMoveHandler);
     scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
     scaleSmaller.addEventListener('click', scaleDecreaseClickHandler);
     scaleBigger.addEventListener('click', scaleIncreaseClickHandler);
-    closeFormButton.addEventListener('click', closeFormClickHandler);
+    closeFormButton.addEventListener('click', buttonClickCloseFormHandler);
     imageUploadForm.addEventListener('submit', formSubmitHandler);
     addImage();
   };
 
-  var closeFormClickHandler = function () {
+  var closeForm = function () {
     imageUploadOverlay.classList.add('hidden');
     pinHandle.removeEventListener('mousedown', pinMouseMoveHandler);
     textHashtags.removeEventListener('change', hashtagsValidationBlurHandler);
@@ -271,7 +294,7 @@
     effectsItems.forEach(function (item) {
       item.removeEventListener('click', effectsItemsSwitchHandler);
     });
-    effects.removeEventListener('change', effectsChangeRemoveSettingsHandler);
+    effects.removeEventListener('change', effectsChangeHandler);
     pinHandle.removeEventListener('mouseup', pinMouseMoveHandler);
     scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
     scaleSmaller.removeEventListener('click', scaleDecreaseClickHandler);
@@ -286,7 +309,7 @@
     return curArr.indexOf(item) === index;
   };
 
-  var hashtagsValidationBlurHandler = function () {
+  var hashtagsValidate = function () {
     var hashtagArr = textHashtags.value.trim().toLowerCase().split(' ');
     var message = [];
 
@@ -325,12 +348,21 @@
 
     textHashtags.setCustomValidity(message.join(' '));
   };
-  var textValidationBlurHandler = function () {
+
+  var hashtagsValidationBlurHandler = function () {
+    hashtagsValidate();
+  };
+
+  var textValidate = function () {
     if (textDescription.value.length > 140) {
       textDescription.setCustomValidity('Длина комментария не может составлять больше 140 символов.');
     } else {
       textDescription.setCustomValidity('');
     }
+  };
+
+  var textValidationBlurHandler = function () {
+    textValidate();
   };
 
   var formInit = function () {
