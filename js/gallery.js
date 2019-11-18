@@ -5,6 +5,7 @@
   var imageFilters = document.querySelector('.img-filters');
   var picturesNodes = [];
   var pictures = [];
+
   var renderListPictures = function (photos) {
     var fragment = document.createDocumentFragment();
     photos.forEach(function (item) {

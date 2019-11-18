@@ -112,11 +112,11 @@
     }
   };
 
-  var onPinMove = function (evt) {
+  var pinMouseMoveHandler = function (evt) {
     var startPinPosition = parseFloat(pinHandle.style.left);
     var startCoordinate = evt.clientX;
 
-    var onMouseMove = function (moveEvt) {
+    var mouseMoveHandler = function (moveEvt) {
       var shift = moveEvt.clientX - startCoordinate;
       var currentPinPosition = startPinPosition + shift / pinHandleParams.ABSOLUTE_MAX_VALUE * pinHandleParams.MAX_VALUE;
 
@@ -139,12 +139,12 @@
       imageUploadPreview.style.filter = changePinHandleObj[inputValue];
     };
 
-    var onMouseUp = function () {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+    var mouseUpHandler = function () {
+      document.removeEventListener('mousemove', mouseMoveHandler);
+      document.removeEventListener('mouseup', mouseUpHandler);
     };
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
   };
 
   var changeEffectsObj = {
@@ -155,7 +155,7 @@
     'heat': filters.HEAT.CLASS_NAME
   };
 
-  var changeEffects = function () {
+  var effectsChangeHandler = function () {
     var inputValue = imageUploadForm.effect.value;
     imageUploadPreview.classList.add(changeEffectsObj[inputValue]);
     if (inputValue !== 'none') {
@@ -163,13 +163,17 @@
     }
   };
 
-  var removePictureSettings = function () {
-    effectSlider.classList.add('hidden');
+  var resetPictureStyle = function () {
     imageUploadPreview.removeAttribute('class');
     imageUploadPreview.removeAttribute('style');
   };
 
-  var effectsItemsSwitch = function () {
+  var effectsChangeRemoveSettingsHandler = function () {
+    effectSlider.classList.add('hidden');
+    effectsChangeHandler();
+  };
+
+  var effectsItemsSwitchHandler = function () {
     pinHandle.style.left = pinHandleParams.MAX_VALUE + pinHandleParams.RELATIVE_VALUE;
     effectLevelDepth.style.width = pinHandleParams.MAX_VALUE + pinHandleParams.RELATIVE_VALUE;
   };
@@ -179,7 +183,7 @@
     scaleValue.value = value + scale.SCALE_UNIT;
   };
 
-  var setScaleDecrease = function () {
+  var scaleDecreaseClickHandler = function () {
     var scaleValueNumber = parseInt(scaleValue.value, 10);
     if (scaleValueNumber > scale.MIN_VALUE) {
       scaleValueNumber -= scale.STEP;
@@ -187,7 +191,7 @@
     setScaleValue(scaleValueNumber);
   };
 
-  var setScaleIncrease = function () {
+  var scaleIncreaseClickHandler = function () {
     var scaleValueNumber = parseInt(scaleValue.value, 10);
     if (scaleValueNumber < scale.MAX_VALUE) {
       scaleValueNumber += scale.STEP;
@@ -196,15 +200,15 @@
   };
   var formSuccessHandler = function () {
     window.messages.getSuccess();
-    closeForm();
+    closeFormClickHandler();
   };
   var formErrorHandler = function (errorMessage) {
     window.messages.getError(errorMessage);
-    closeForm();
+    closeFormClickHandler();
   };
 
   var documentEscPressHandler = function (evt) {
-    window.util.isEscEvent(evt, closeForm);
+    window.util.isEscEvent(evt, closeFormClickHandler);
   };
 
   var inputHashtagBlurHandler = function () {
@@ -223,17 +227,18 @@
     document.addEventListener('keydown', documentEscPressHandler);
   };
 
-  var FormSubmitHandler = function (evt) {
+  var formSubmitHandler = function (evt) {
     evt.preventDefault();
     window.backend.save(new FormData(imageUploadForm), formSuccessHandler, formErrorHandler);
+    effectsChangeRemoveSettingsHandler();
   };
   var formOpen = function () {
     imageUploadOverlay.classList.remove('hidden');
-    pinHandle.addEventListener('mousedown', onPinMove);
-    textHashtags.addEventListener('blur', hashtagsValidation);
+    pinHandle.addEventListener('mousedown', pinMouseMoveHandler);
+    textHashtags.addEventListener('blur', hashtagsValidationBlurHandler);
     textHashtags.addEventListener('focus', inputHashtagFocusHandler);
     textHashtags.addEventListener('blur', inputHashtagBlurHandler);
-    textDescription.addEventListener('blur', descriptionValidation);
+    textDescription.addEventListener('blur', textValidationBlurHandler);
     textDescription.addEventListener('focus', textareaDescriptionFocusHandler);
     textDescription.addEventListener('blur', textareaDescriptionBlurHandler);
     imageUploadForm.addEventListener('invalid', function (evt) {
@@ -241,46 +246,48 @@
     }, true);
     document.addEventListener('keydown', documentEscPressHandler);
     effectsItems.forEach(function (item) {
-      item.addEventListener('change', effectsItemsSwitch);
+      item.addEventListener('change', effectsItemsSwitchHandler);
     });
-    effects.addEventListener('change', changeEffects);
-    pinHandle.addEventListener('mouseup', onPinMove);
+    effects.addEventListener('change', effectsChangeRemoveSettingsHandler);
+    pinHandle.addEventListener('mouseup', pinMouseMoveHandler);
     scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
-    scaleSmaller.addEventListener('click', setScaleDecrease);
-    scaleBigger.addEventListener('click', setScaleIncrease);
-    closeFormButton.addEventListener('click', closeForm);
-    imageUploadForm.addEventListener('submit', FormSubmitHandler);
+    scaleSmaller.addEventListener('click', scaleDecreaseClickHandler);
+    scaleBigger.addEventListener('click', scaleIncreaseClickHandler);
+    closeFormButton.addEventListener('click', closeFormClickHandler);
+    imageUploadForm.addEventListener('submit', formSubmitHandler);
     addImage();
   };
 
-  var closeForm = function () {
+  var closeFormClickHandler = function () {
     imageUploadOverlay.classList.add('hidden');
-    pinHandle.removeEventListener('mousedown', onPinMove);
-    textHashtags.removeEventListener('change', hashtagsValidation);
-    textHashtags.removeEventListener('blur', hashtagsValidation);
-    textDescription.removeEventListener('blur', descriptionValidation);
+    pinHandle.removeEventListener('mousedown', pinMouseMoveHandler);
+    textHashtags.removeEventListener('change', hashtagsValidationBlurHandler);
+    textHashtags.removeEventListener('blur', hashtagsValidationBlurHandler);
+    textDescription.removeEventListener('blur', textValidationBlurHandler);
     imageUploadForm.removeEventListener('invalid', function (evt) {
       evt.target.classList.add('red');
     }, true);
     document.removeEventListener('keydown', documentEscPressHandler);
     effectsItems.forEach(function (item) {
-      item.removeEventListener('click', effectsItemsSwitch);
+      item.removeEventListener('click', effectsItemsSwitchHandler);
     });
-    effects.removeEventListener('change', changeEffects);
-    pinHandle.removeEventListener('mouseup', onPinMove);
+    effects.removeEventListener('change', effectsChangeRemoveSettingsHandler);
+    pinHandle.removeEventListener('mouseup', pinMouseMoveHandler);
     scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
-    scaleSmaller.removeEventListener('click', setScaleDecrease);
-    scaleBigger.removeEventListener('click', setScaleIncrease);
-    imageUploadForm.removeEventListener('submit', FormSubmitHandler);
-    removePictureSettings();
+    scaleSmaller.removeEventListener('click', scaleDecreaseClickHandler);
+    scaleBigger.removeEventListener('click', scaleIncreaseClickHandler);
+    imageUploadForm.removeEventListener('submit', formSubmitHandler);
+    textHashtags.classList.remove('red');
+    resetPictureStyle();
+    imageUploadForm.reset();
   };
 
   var isUniqueElem = function (item, index, curArr) {
     return curArr.indexOf(item) === index;
   };
 
-  var hashtagsValidation = function () {
-    var hashtagArr = textHashtags.value.toLowerCase().split(' ');
+  var hashtagsValidationBlurHandler = function () {
+    var hashtagArr = textHashtags.value.trim().toLowerCase().split(' ');
     var message = [];
 
     var errorCodes = {
@@ -318,7 +325,7 @@
 
     textHashtags.setCustomValidity(message.join(' '));
   };
-  var descriptionValidation = function () {
+  var textValidationBlurHandler = function () {
     if (textDescription.value.length > 140) {
       textDescription.setCustomValidity('Длина комментария не может составлять больше 140 символов.');
     } else {

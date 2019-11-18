@@ -15,7 +15,11 @@
     }
   };
 
-  var onButtonClickCloseHandle = function (evt) {
+  var elementRemoveClickHandler = function () {
+    getRemoveElement();
+  };
+
+  var buttonCloseClickHandler = function (evt) {
     evt.preventDefault();
     getRemoveElement();
   };
@@ -28,21 +32,21 @@
     var errorButtons = errorElement.querySelectorAll('.error__button');
 
     errorButtons.forEach(function (item) {
-      item.addEventListener('click', onButtonClickCloseHandle);
+      item.addEventListener('click', buttonCloseClickHandler);
     });
 
     document.addEventListener('keydown', documentEscCloseHandle);
-    document.addEventListener('click', getRemoveElement);
+    document.addEventListener('click', elementRemoveClickHandler);
     errorElement.querySelector('.error__title').textContent = errorMessage;
     mainContainer.insertAdjacentElement('afterbegin', errorElement);
   };
 
   var getSuccessMessage = function () {
     var successButton = successElement.querySelector('.success__button');
-    successButton.addEventListener('click', onButtonClickCloseHandle);
+    successButton.addEventListener('click', buttonCloseClickHandler);
 
     document.addEventListener('keydown', documentEscCloseHandle);
-    document.addEventListener('click', getRemoveElement);
+    document.addEventListener('click', elementRemoveClickHandler);
     mainContainer.insertAdjacentElement('afterbegin', successElement);
   };
 

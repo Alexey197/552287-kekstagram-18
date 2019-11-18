@@ -1,16 +1,16 @@
 'use strict';
 
 (function () {
-  var xhrParams = {
-    URL_LOAD: 'https://js.dump.academy/kekstagram/data',
-    URL_SAVE: 'https://js.dump.academy/kekstagram',
-    ERROR_CODE: 200
+  var SUCCESS_CODE = 200;
+  var Urls = {
+    LOAD: 'https://js.dump.academy/kekstagram/data',
+    SAVE: 'https://js.dump.academy/kekstagram'
   };
   var getBackendXhr = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.addEventListener('load', function () {
-      if (xhr.status === xhrParams.ERROR_CODE) {
+      if (xhr.status === SUCCESS_CODE) {
         onLoad(xhr.response);
       } else {
         onError('Статус ответа: ' + xhr.status + xhr.statusText);
@@ -25,12 +25,12 @@
   window.backend = {
     load: function (onLoad, onError) {
       var xhr = getBackendXhr(onLoad, onError);
-      xhr.open('GET', xhrParams.URL_LOAD);
+      xhr.open('GET', Urls.LOAD);
       xhr.send();
     },
     save: function (data, onLoad, onError) {
       var xhr = getBackendXhr(onLoad, onError);
-      xhr.open('POST', xhrParams.URL_SAVE);
+      xhr.open('POST', Urls.SAVE);
       xhr.send(data);
     }
   };

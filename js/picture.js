@@ -2,7 +2,7 @@
 
 (function () {
   var similarPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
-  var onSmallPhotoEntPress = function (evt) {
+  var smallPhotoEntPressHandler = function (evt) {
     window.util.isEnterEvent(evt, window.preview.showBigPhoto);
   };
   window.picture = {
@@ -14,7 +14,7 @@
       photoElement.addEventListener('click', function () {
         window.preview.showBigPhoto(photo);
       });
-      photoElement.addEventListener('keydown', onSmallPhotoEntPress);
+      photoElement.addEventListener('keydown', smallPhotoEntPressHandler);
       return photoElement;
     }
   };
