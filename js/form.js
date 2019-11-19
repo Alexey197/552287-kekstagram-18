@@ -2,7 +2,7 @@
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
-  var pinHandleParams = {
+  var PinHandleParam = {
     MIN_VALUE: 0,
     MAX_VALUE: 100,
     ABSOLUTE_MAX_VALUE: 455,
@@ -17,7 +17,7 @@
     'hashtag_start_dies': 'Хэш-тег начинается с символа # (решётка).'
   };
 
-  var filters = {
+  var FilterParam = {
     NONE: {
       CLASS_NAME: 'effects__preview--none',
       FILTER: '',
@@ -61,7 +61,7 @@
     }
   };
 
-  var scale = {
+  var ScaleParam = {
     MAX_VALUE: 100,
     MIN_VALUE: 25,
     STEP: 25,
@@ -118,22 +118,22 @@
 
     var mouseMoveHandler = function (moveEvt) {
       var shift = moveEvt.clientX - startCoordinate;
-      var currentPinPosition = startPinPosition + shift / pinHandleParams.ABSOLUTE_MAX_VALUE * pinHandleParams.MAX_VALUE;
+      var currentPinPosition = startPinPosition + shift / PinHandleParam.ABSOLUTE_MAX_VALUE * PinHandleParam.MAX_VALUE;
 
-      if (currentPinPosition < pinHandleParams.MIN_VALUE) {
-        currentPinPosition = pinHandleParams.MIN_VALUE;
-      } else if (currentPinPosition > pinHandleParams.MAX_VALUE) {
-        currentPinPosition = pinHandleParams.MAX_VALUE;
+      if (currentPinPosition < PinHandleParam.MIN_VALUE) {
+        currentPinPosition = PinHandleParam.MIN_VALUE;
+      } else if (currentPinPosition > PinHandleParam.MAX_VALUE) {
+        currentPinPosition = PinHandleParam.MAX_VALUE;
       }
       pinHandle.style.left = currentPinPosition + '%';
       effectLevelDepth.style.width = currentPinPosition + '%';
       var effectPinValue = Math.round(currentPinPosition);
       var changePinHandleObj = {
-        'chrome': 'grayscale(' + effectPinValue / pinHandleParams.MAX_VALUE + ')',
-        'sepia': 'sepia(' + effectPinValue / pinHandleParams.MAX_VALUE + ')',
-        'marvin': 'invert(' + effectPinValue + filters.MARVIN.FILTER_UNIT + ')',
-        'phobos': 'blur(' + effectPinValue / pinHandleParams.MAX_VALUE * (filters.PHOBOS.MAX_VALUE - filters.PHOBOS.MIN_VALUE) + filters.PHOBOS.FILTER_UNIT + ')',
-        'heat': 'brightness(' + (effectPinValue / pinHandleParams.MAX_VALUE * (filters.HEAT.MAX_VALUE - filters.HEAT.MIN_VALUE) + filters.HEAT.MIN_VALUE) + ')'
+        'chrome': 'grayscale(' + effectPinValue / PinHandleParam.MAX_VALUE + ')',
+        'sepia': 'sepia(' + effectPinValue / PinHandleParam.MAX_VALUE + ')',
+        'marvin': 'invert(' + effectPinValue + FilterParam.MARVIN.FILTER_UNIT + ')',
+        'phobos': 'blur(' + effectPinValue / PinHandleParam.MAX_VALUE * (FilterParam.PHOBOS.MAX_VALUE - FilterParam.PHOBOS.MIN_VALUE) + FilterParam.PHOBOS.FILTER_UNIT + ')',
+        'heat': 'brightness(' + (effectPinValue / PinHandleParam.MAX_VALUE * (FilterParam.HEAT.MAX_VALUE - FilterParam.HEAT.MIN_VALUE) + FilterParam.HEAT.MIN_VALUE) + ')'
       };
       var inputValue = imageUploadForm.effect.value;
       imageUploadPreview.style.filter = changePinHandleObj[inputValue];
@@ -148,11 +148,11 @@
   };
 
   var changeEffectsObj = {
-    'chrome': filters.CHROME.CLASS_NAME,
-    'sepia': filters.SEPIA.CLASS_NAME,
-    'marvin': filters.MARVIN.CLASS_NAME,
-    'phobos': filters.PHOBOS.CLASS_NAME,
-    'heat': filters.HEAT.CLASS_NAME
+    'chrome': FilterParam.CHROME.CLASS_NAME,
+    'sepia': FilterParam.SEPIA.CLASS_NAME,
+    'marvin': FilterParam.MARVIN.CLASS_NAME,
+    'phobos': FilterParam.PHOBOS.CLASS_NAME,
+    'heat': FilterParam.HEAT.CLASS_NAME
   };
 
   var changeEffects = function () {
@@ -164,22 +164,19 @@
   };
 
   var resetPictureStyle = function () {
+    effectSlider.classList.add('hidden');
     imageUploadPreview.removeAttribute('class');
     imageUploadPreview.removeAttribute('style');
   };
 
-  var getHideSlider = function () {
-    effectSlider.classList.add('hidden');
-  };
-
   var effectsChangeHandler = function () {
+    resetPictureStyle();
     changeEffects();
-    getHideSlider();
   };
 
   var effectsItemsSwitch = function () {
-    pinHandle.style.left = pinHandleParams.MAX_VALUE + pinHandleParams.RELATIVE_VALUE;
-    effectLevelDepth.style.width = pinHandleParams.MAX_VALUE + pinHandleParams.RELATIVE_VALUE;
+    pinHandle.style.left = PinHandleParam.MAX_VALUE + PinHandleParam.RELATIVE_VALUE;
+    effectLevelDepth.style.width = PinHandleParam.MAX_VALUE + PinHandleParam.RELATIVE_VALUE;
   };
 
   var effectsItemsSwitchHandler = function () {
@@ -188,13 +185,13 @@
 
   var setScaleValue = function (value) {
     imageUploadPreview.style.transform = ('scale(' + value / 100 + ')');
-    scaleValue.value = value + scale.SCALE_UNIT;
+    scaleValue.value = value + ScaleParam.SCALE_UNIT;
   };
 
   var scaleDecrease = function () {
     var scaleValueNumber = parseInt(scaleValue.value, 10);
-    if (scaleValueNumber > scale.MIN_VALUE) {
-      scaleValueNumber -= scale.STEP;
+    if (scaleValueNumber > ScaleParam.MIN_VALUE) {
+      scaleValueNumber -= ScaleParam.STEP;
     }
     setScaleValue(scaleValueNumber);
   };
@@ -205,8 +202,8 @@
 
   var scaleIncrease = function () {
     var scaleValueNumber = parseInt(scaleValue.value, 10);
-    if (scaleValueNumber < scale.MAX_VALUE) {
-      scaleValueNumber += scale.STEP;
+    if (scaleValueNumber < ScaleParam.MAX_VALUE) {
+      scaleValueNumber += ScaleParam.STEP;
     }
     setScaleValue(scaleValueNumber);
   };
@@ -248,7 +245,6 @@
     evt.preventDefault();
     window.backend.save(new FormData(imageUploadForm), formSuccessHandler, formErrorHandler);
     changeEffects();
-    getHideSlider();
   };
 
   var buttonClickCloseFormHandler = function () {
@@ -273,7 +269,7 @@
     });
     effects.addEventListener('change', effectsChangeHandler);
     pinHandle.addEventListener('mouseup', pinMouseMoveHandler);
-    scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
+    scaleValue.value = ScaleParam.MAX_VALUE + ScaleParam.SCALE_UNIT;
     scaleSmaller.addEventListener('click', scaleDecreaseClickHandler);
     scaleBigger.addEventListener('click', scaleIncreaseClickHandler);
     closeFormButton.addEventListener('click', buttonClickCloseFormHandler);
@@ -296,12 +292,12 @@
     });
     effects.removeEventListener('change', effectsChangeHandler);
     pinHandle.removeEventListener('mouseup', pinMouseMoveHandler);
-    scaleValue.value = scale.MAX_VALUE + scale.SCALE_UNIT;
+    scaleValue.value = ScaleParam.MAX_VALUE + ScaleParam.SCALE_UNIT;
     scaleSmaller.removeEventListener('click', scaleDecreaseClickHandler);
     scaleBigger.removeEventListener('click', scaleIncreaseClickHandler);
     imageUploadForm.removeEventListener('submit', formSubmitHandler);
     textHashtags.classList.remove('red');
-    resetPictureStyle();
+    // resetPictureStyle();
     imageUploadForm.reset();
   };
 
